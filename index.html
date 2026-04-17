@@ -791,6 +791,7 @@ const db   = firebase.database();
 //  STATE
 // ============================================================
 let currentUser = null;
+window._signingUp = false;
 let allProducts  = [];
 let cart         = [];
 let wishlist     = [];
@@ -859,8 +860,14 @@ async function doLogin(){
   btn.innerHTML='<div class="loader"></div>';
   try{
     await auth.signInWithEmailAndPassword(email,pass);
+    showToast('Welcome back!');
   }catch(e){
-    showErr('loginErr',e.message.replace('Firebase:','').replace(/\(.*\)/,'').trim());
+    let msg=e.message.replace('Firebase:','').replace(/\(.*?\)/g,'').trim();
+    if(e.code==='auth/user-not-found')msg='No account found with this email. Please sign up.';
+    if(e.code==='auth/wrong-password')msg='Incorrect password. Please try again.';
+    if(e.code==='auth/invalid-credential')msg='Invalid email or password. Please check and retry.';
+    if(e.code==='auth/too-many-requests')msg='Too many failed attempts. Please try again later.';
+    showErr('loginErr',msg);
     btn.innerHTML='<span>Login</span>';
   }
 }
@@ -873,23 +880,54 @@ async function doSignup(){
   const cpass=document.getElementById('sCPass').value;
   const addr=document.getElementById('sAddr').value.trim();
   const agree=document.getElementById('sAgree').checked;
-  hideErr('signupErr');document.getElementById('signupOk').classList.add('hidden');
+  hideErr('signupErr');
+  document.getElementById('signupOk').classList.add('hidden');
   if(!fn||!ln||!email||!phone||!pass||!addr){showErr('signupErr','All fields are required');return;}
   if(pass!==cpass){showErr('signupErr','Passwords do not match');return;}
   if(pass.length<6){showErr('signupErr','Password must be at least 6 characters');return;}
   if(!agree){showErr('signupErr','Please accept Terms & Conditions');return;}
   const btn=document.getElementById('signupBtn');
   btn.innerHTML='<div class="loader"></div>';
+  window._signingUp=true;
   try{
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
-    await cred.user.updateProfile({displayName:`${fn} ${ln}`});
-    await db.ref('users/'+cred.user.uid).set({name:`${fn} ${ln}`,email,phone,address:addr,createdAt:Date.now(),role:'customer'});
-    const ok=document.getElementById('signupOk');ok.classList.remove('hidden');ok.querySelector('span').textContent='Account created! Logging you in…';
+    await cred.user.updateProfile({displayName:fn+' '+ln});
+    const userData={
+      name:fn+' '+ln,
+      firstName:fn,
+      lastName:ln,
+      email:email,
+      phone:phone,
+      address:addr,
+      createdAt:Date.now(),
+      role:'customer',
+      uid:cred.user.uid
+    };
+    // Write to Firebase FIRST, then proceed
+    await db.ref('users/'+cred.user.uid).set(userData);
+    // Now show app
+    window._signingUp=false;
+    currentUser=cred.user;
+    const ok=document.getElementById('signupOk');
+    ok.classList.remove('hidden');
+    ok.querySelector('span').textContent='Account created! Welcome to Prince Enterprise!';
+    btn.innerHTML='<span>Create Account</span>';
+    setTimeout(async()=>{
+      document.getElementById('authWrap').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      await loadAppData();
+    },1200);
   }catch(e){
-    showErr('signupErr',e.message.replace('Firebase:','').replace(/\(.*\)/,'').trim());
+    window._signingUp=false;
+    let msg=e.message.replace('Firebase:','').replace(/\(.*?\)/g,'').trim();
+    if(e.code==='auth/email-already-in-use')msg='This email is already registered. Please login instead.';
+    if(e.code==='auth/invalid-email')msg='Please enter a valid email address.';
+    if(e.code==='auth/weak-password')msg='Password is too weak. Use at least 6 characters.';
+    showErr('signupErr',msg);
     btn.innerHTML='<span>Create Account</span>';
   }
 }
+
 async function doForgot(){
   const email=document.getElementById('fgEmail').value.trim();
   if(!email){showToast('Enter your email');return;}
@@ -903,28 +941,64 @@ async function doGoogle(){
   try{
     const res=await auth.signInWithPopup(prov);
     const u=res.user;
-    await db.ref('users/'+u.uid).update({name:u.displayName,email:u.email,createdAt:Date.now(),role:'customer'});
-  }catch(e){showToast(e.message);}
+    // Check if user doc exists; if not, create full profile
+    const existing=await db.ref('users/'+u.uid).get();
+    if(!existing.val()){
+      await db.ref('users/'+u.uid).set({
+        name:u.displayName||'User',
+        email:u.email||'',
+        phone:'',address:'',
+        photoURL:u.photoURL||'',
+        createdAt:Date.now(),
+        role:'customer',
+        uid:u.uid
+      });
+    } else {
+      await db.ref('users/'+u.uid).update({name:u.displayName,email:u.email,lastLogin:Date.now()});
+    }
+    showToast('Welcome '+( u.displayName||'')+'!');
+  }catch(e){
+    let msg=e.message;
+    if(e.code==='auth/popup-closed-by-user')msg='Sign-in popup was closed. Please try again.';
+    showToast(msg);
+  }
 }
 
 // ============================================================
 //  AUTH STATE LISTENER
 // ============================================================
 auth.onAuthStateChanged(async user=>{
+  // Skip if we're in the middle of signup (handled manually above)
+  if(window._signingUp) return;
   if(user){
     currentUser=user;
     document.getElementById('authWrap').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
     await loadAppData();
+  } else {
+    // User logged out — show auth
+    currentUser=null;
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('authWrap').classList.remove('hidden');
   }
 });
 
 async function loadAppData(){
-  // Profile
+  // Profile — if user doc doesn't exist yet (e.g. Google sign-in), create it
   const snap=await db.ref('users/'+currentUser.uid).get();
-  const udata=snap.val()||{};
+  let udata=snap.val();
+  if(!udata){
+    // Create a basic profile doc
+    udata={
+      name:currentUser.displayName||currentUser.email.split('@')[0]||'User',
+      email:currentUser.email||'',
+      phone:'',address:'',
+      createdAt:Date.now(),role:'customer',uid:currentUser.uid
+    };
+    await db.ref('users/'+currentUser.uid).set(udata);
+  }
   const name=udata.name||currentUser.displayName||'User';
-  document.getElementById('profAv').textContent=name[0].toUpperCase();
+  document.getElementById('profAv').textContent=(name[0]||'U').toUpperCase();
   document.getElementById('profName').textContent=name;
   document.getElementById('profEmail').textContent=currentUser.email||'';
 
@@ -1522,8 +1596,58 @@ function contactWA(msg=''){
   const txt=encodeURIComponent(msg||'Hi! I need help with Prince Enterprise products.');
   window.open('https://wa.me/919876543210?text='+txt,'_blank');
 }
-function editProfile(){showToast('Profile editing coming soon');}
-function openAddressBook(){showToast('Address book coming soon');}
+function editProfile(){
+  if(!currentUser)return;
+  db.ref('users/'+currentUser.uid).get().then(snap=>{
+    const u=snap.val()||{};
+    showSheet('Edit Profile',`
+      <div style="padding:14px">
+        <div class="fg"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Full Name</label><input class="fc" id="ep-name" value="${u.name||''}" placeholder="Your full name" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        <div class="fg" style="margin-top:10px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Phone</label><input class="fc" id="ep-phone" value="${u.phone||''}" placeholder="+91 98765 43210" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        <div class="fg" style="margin-top:10px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Delivery Address</label><textarea id="ep-addr" rows="3" placeholder="Your delivery address" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit">${u.address||''}</textarea></div>
+        <div class="fg" style="margin-top:10px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Email (read-only)</label><input class="fc" value="${u.email||currentUser.email||''}" readonly style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--bg);color:var(--m)"></div>
+        <button onclick="saveProfile()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class='fas fa-save'></i> Save Changes</button>
+        <button onclick="document.getElementById('dynSheet').remove()" style="width:100%;padding:11px;background:var(--bg);color:var(--t2);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;font-family:inherit">Cancel</button>
+      </div>
+    `);
+  });
+}
+
+async function saveProfile(){
+  const name=document.getElementById('ep-name').value.trim();
+  const phone=document.getElementById('ep-phone').value.trim();
+  const addr=document.getElementById('ep-addr').value.trim();
+  if(!name){showToast('Name cannot be empty');return;}
+  try{
+    await db.ref('users/'+currentUser.uid).update({name,phone,address:addr,updatedAt:Date.now()});
+    await currentUser.updateProfile({displayName:name});
+    document.getElementById('profAv').textContent=name[0].toUpperCase();
+    document.getElementById('profName').textContent=name;
+    document.getElementById('dynSheet').remove();
+    showToast('Profile updated successfully!');
+  }catch(e){
+    showToast('Error: '+e.message);
+  }
+}
+function openAddressBook(){
+  if(!currentUser)return;
+  db.ref('users/'+currentUser.uid).get().then(snap=>{
+    const u=snap.val()||{};
+    showSheet('Saved Addresses',`
+      <div style="padding:14px">
+        <div style="background:var(--bg);border-radius:8px;border:1.5px solid var(--b);padding:13px;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <i class="fas fa-map-marker-alt" style="color:var(--r)"></i>
+            <span style="font-size:13px;font-weight:700">Default Delivery Address</span>
+          </div>
+          <p style="font-size:13px;color:var(--t2);line-height:1.5">${u.address||'No address saved yet'}</p>
+        </div>
+        <div class="fg"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Update Address</label><textarea id="upd-addr" rows="3" placeholder="Enter your full delivery address" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit">${u.address||''}</textarea></div>
+        <button onclick="(async()=>{const a=document.getElementById('upd-addr').value.trim();if(!a)return showToast('Address cannot be empty');await db.ref('users/'+currentUser.uid+'/address').set(a);document.getElementById('dynSheet').remove();showToast('Address updated!');})();" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class='fas fa-save'></i> Save Address</button>
+      </div>
+    `);
+  });
+}
 function showCoupons(){
   let html='<div style="padding:14px">';
   const list=[...coupons,{code:'PRINCE10',discount:10,type:'percent',desc:'10% off first order'},{code:'LED20',discount:20,type:'percent',desc:'20% off LED strips'}];
