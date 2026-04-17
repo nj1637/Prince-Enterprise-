@@ -441,6 +441,80 @@ footer .fsocial a:hover{background:var(--p);color:#fff}
 /* === RESPONSIVE === */
 @media(min-width:500px){.pgrid{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:700px){.pgrid{grid-template-columns:repeat(4,1fr)}.ban{max-height:240px}.bslide{height:240px}}
+
+/* === LED GLOW EFFECTS === */
+@keyframes ledGlow{0%,100%{box-shadow:0 0 8px var(--a),0 0 20px var(--a),0 0 40px rgba(255,229,0,.3)}50%{box-shadow:0 0 14px var(--a),0 0 30px var(--a),0 0 60px rgba(255,229,0,.5)}}
+@keyframes ledPulse{0%,100%{opacity:1}50%{opacity:.6}}
+@keyframes shimmerLED{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes floatUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes neonFlicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1}20%,22%,24%,55%{opacity:.4}}
+.led-glow{animation:ledGlow 2s ease infinite}
+.neon-text{animation:neonFlicker 4s ease infinite}
+.float-anim{animation:floatUp 3s ease infinite}
+
+/* === SWIPE PANELS === */
+.swipe-panel{transition:transform .32s cubic-bezier(.4,0,.2,1);will-change:transform;touch-action:pan-y}
+.swipe-panel.dragging{transition:none}
+
+/* === PULL-TO-CLOSE === */
+.pull-close-bar{width:44px;height:5px;background:var(--b);border-radius:3px;margin:8px auto 0;cursor:pointer;transition:background .2s}
+.pull-close-bar:hover{background:var(--p)}
+
+/* === MULTIPLE ADDRESSES === */
+.addr-item{background:var(--bg);border-radius:var(--rd);border:1.5px solid var(--b);padding:13px;margin-bottom:9px;cursor:pointer;transition:var(--tr);position:relative}
+.addr-item.selected{border-color:var(--g);background:rgba(38,165,65,.06)}
+.addr-item.selected::after{content:'✓';position:absolute;top:10px;right:12px;color:var(--g);font-weight:800;font-size:14px}
+.addr-type{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--p);margin-bottom:3px}
+.addr-text{font-size:12.5px;color:var(--t2);line-height:1.5}
+.addr-del{position:absolute;bottom:10px;right:10px;color:var(--r);font-size:12px;cursor:pointer;padding:3px 6px;border-radius:4px;transition:var(--tr)}
+.addr-del:hover{background:#ffebee}
+
+/* === INVOICE === */
+.invoice-wrap{background:#fff;padding:20px;font-family:'Nunito',sans-serif;color:#212121}
+.inv-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid #e0e0e0}
+.inv-logo{display:flex;align-items:center;gap:9px}
+.inv-logo-ico{width:44px;height:44px;background:linear-gradient(135deg,#2874f0,#1565c0);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px}
+.inv-logo-txt h3{font-size:16px;font-weight:800;font-family:'Exo 2',sans-serif}
+.inv-logo-txt p{font-size:10px;color:#878787}
+.inv-meta{text-align:right;font-size:11px;color:#535766}
+.inv-meta strong{font-size:13px;color:#212121;display:block}
+.inv-party{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.inv-party-box{background:#f8f9fa;border-radius:8px;padding:11px}
+.inv-party-box h4{font-size:10.5px;font-weight:800;text-transform:uppercase;color:#878787;margin-bottom:5px;letter-spacing:.5px}
+.inv-party-box p{font-size:12px;line-height:1.5;color:#212121}
+.inv-tbl{width:100%;border-collapse:collapse;margin-bottom:14px}
+.inv-tbl th{background:#2874f0;color:#fff;padding:8px 10px;font-size:10.5px;text-align:left}
+.inv-tbl td{padding:8px 10px;border-bottom:1px solid #f0f0f0;font-size:12px}
+.inv-tbl tr:last-child td{border-bottom:none}
+.inv-total{background:#f0f4ff;border-radius:8px;padding:12px;text-align:right}
+.inv-total-row{display:flex;justify-content:space-between;font-size:12.5px;padding:3px 0}
+.inv-total-row.final{font-size:15px;font-weight:800;border-top:1.5px solid #c5d5f0;margin-top:6px;padding-top:8px;color:#2874f0}
+.inv-foot{margin-top:14px;text-align:center;font-size:10.5px;color:#878787;border-top:1px solid #f0f0f0;padding-top:10px}
+
+/* === IMAGE UPLOAD === */
+.img-upload-zone{border:2px dashed var(--b);border-radius:var(--rd);padding:20px;text-align:center;cursor:pointer;transition:var(--tr);background:var(--bg)}
+.img-upload-zone:hover,.img-upload-zone.drag{border-color:var(--p);background:var(--pl)}
+.img-upload-zone i{font-size:28px;color:var(--m);margin-bottom:8px;display:block}
+.img-upload-zone p{font-size:12.5px;color:var(--m)}
+.img-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}
+.img-prev{position:relative;padding-top:100%;border-radius:6px;overflow:hidden;background:var(--c2)}
+.img-prev img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.img-prev-del{position:absolute;top:4px;right:4px;width:20px;height:20px;background:rgba(255,0,0,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;cursor:pointer}
+
+/* === NOTIFICATION BADGE PULSE === */
+@keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+.badge-new{animation:badgePulse .6s ease 3}
+
+/* === PRODUCT CARD LED HOVER === */
+.pc:hover{box-shadow:0 4px 20px rgba(40,116,240,.2),0 8px 32px rgba(40,116,240,.1)!important}
+.pc-sm:hover{box-shadow:0 4px 16px rgba(40,116,240,.18)!important}
+
+/* === BOTTOM NAV INDICATOR === */
+@keyframes navSlide{from{width:0;opacity:0}to{opacity:1}}
+.ni.on .nbar{animation:navSlide .25s ease both}
+
+/* === SHEET GESTURES === */
+.sheet-inner{transition:transform .3s cubic-bezier(.4,0,.2,1);will-change:transform}
 </style>
 </head>
 <body>
@@ -448,7 +522,7 @@ footer .fsocial a:hover{background:var(--p);color:#fff}
 <!-- SPLASH -->
 <div id="splash">
   <div class="sp-ring"></div><div class="sp-ring"></div><div class="sp-ring"></div>
-  <div class="sp-orb"><i class="fas fa-bolt"></i></div>
+  <div class="sp-orb led-glow float-anim"><i class="fas fa-bolt"></i></div>
   <div class="sp-brand"><h1>Prince Enterprise</h1><p>LED Lights &amp; Electronics</p></div>
   <div class="sp-pb"><div class="sp-pf"></div></div>
   <p class="sp-tagline">Illuminating Your World</p>
@@ -559,7 +633,7 @@ footer .fsocial a:hover{background:var(--p);color:#fff}
       <!-- Flash Deals -->
       <div class="fldeal">
         <div class="flhd">
-          <span class="flt"><i class="fas fa-bolt"></i> Flash Deals</span>
+          <span class="flt led-glow" style="padding:3px 10px;border-radius:20px;background:rgba(255,0,0,.07)"><i class="fas fa-bolt"></i> Flash Deals</span>
           <div class="fltime">
             <span class="flu" id="flH">00</span><span class="fls">:</span>
             <span class="flu" id="flM">00</span><span class="fls">:</span>
@@ -640,7 +714,11 @@ footer .fsocial a:hover{background:var(--p);color:#fff}
     <!-- PROFILE PAGE -->
     <div id="pgProfile" class="pview">
       <div class="prof-hdr">
-        <div class="prof-av" id="profAv">U</div>
+        <div class="prof-av" id="profAv" onclick="openAvatarModal()" style="cursor:pointer;position:relative">
+          <span id="profAvTxt">U</span>
+          <img id="profAvImg" style="position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;display:none">
+          <div style="position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff"><i class="fas fa-camera" style="font-size:8px;color:#fff"></i></div>
+        </div>
         <div class="prof-name"><h3 id="profName">User</h3><p id="profEmail">user@email.com</p></div>
         <div class="prof-edit" onclick="editProfile()"><i class="fas fa-edit"></i></div>
       </div>
@@ -648,7 +726,7 @@ footer .fsocial a:hover{background:var(--p);color:#fff}
         <div class="pmenu-hd">My Account</div>
         <div class="pmi" onclick="navTo('orders')"><div class="pmi-ico" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-box"></i></div><span class="pmi-lbl">My Orders</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="navTo('wishlist')"><div class="pmi-ico" style="background:#fce4ec;color:#c2185b"><i class="fas fa-heart"></i></div><span class="pmi-lbl">Wishlist</span><i class="fas fa-chevron-right pmi-arr"></i></div>
-        <div class="pmi" onclick="openAddressBook()"><div class="pmi-ico" style="background:#e8f5e9;color:#2e7d32"><i class="fas fa-map-marker-alt"></i></div><span class="pmi-lbl">Saved Addresses</span><i class="fas fa-chevron-right pmi-arr"></i></div>
+        <div class="pmi" onclick="openAddrModal()"><div class="pmi-ico" style="background:#e8f5e9;color:#2e7d32"><i class="fas fa-map-marker-alt"></i></div><span class="pmi-lbl">Manage Addresses</span><span id="addrCountBadge" style="background:var(--p);color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 7px;margin-right:4px">0</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="navTo('notifs')"><div class="pmi-ico" style="background:#fff8e1;color:#f57f17"><i class="fas fa-bell"></i></div><span class="pmi-lbl">Notifications</span><i class="fas fa-chevron-right pmi-arr"></i></div>
       </div>
       <div class="pmenu">
@@ -766,6 +844,108 @@ footer .fsocial a:hover{background:var(--p);color:#fff}
   </div>
 </div>
 
+
+<!-- INVOICE MODAL -->
+<div id="invoiceModal" class="hidden">
+  <div class="overlay" onclick="closeInvoice()"></div>
+  <div style="position:fixed;inset:0;z-index:870;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
+    <div id="invoiceSheet" class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;pointer-events:all;padding-bottom:20px">
+      <div style="padding:10px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5">
+        <div class="pull-close-bar" onclick="closeInvoice()"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800">Invoice</h3>
+          <div style="display:flex;gap:8px">
+            <button onclick="downloadInvoice()" class="btn btn-p btn-sm"><i class="fas fa-download"></i> Download PDF</button>
+            <button onclick="closeInvoice()" style="width:30px;height:30px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;color:var(--m);display:flex;align-items:center;justify-content:center"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+      </div>
+      <div id="invoiceContent" style="padding:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PUSH NOTIFICATION PERMISSION PROMPT -->
+<div id="notifPrompt" class="hidden">
+  <div style="position:fixed;bottom:calc(var(--nh)+12px);left:12px;right:12px;z-index:850;background:var(--c);border-radius:14px;padding:14px 16px;box-shadow:var(--sh3);display:flex;align-items:center;gap:11px;border:1.5px solid var(--pl);animation:spFd .4s ease both">
+    <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ff7043,var(--p));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-bell" style="color:#fff;font-size:18px"></i></div>
+    <div style="flex:1"><div style="font-size:13px;font-weight:700;margin-bottom:2px">Enable Notifications</div><div style="font-size:11.5px;color:var(--m)">Get alerts for orders, deals &amp; offers</div></div>
+    <div style="display:flex;gap:6px;flex-shrink:0">
+      <button onclick="enableNotifs()" class="btn btn-p btn-sm" style="padding:7px 11px;font-size:12px">Allow</button>
+      <button onclick="document.getElementById('notifPrompt').classList.add('hidden')" style="padding:7px 10px;border-radius:6px;font-size:12px;background:var(--bg);color:var(--m);cursor:pointer;border:none;font-family:inherit">Later</button>
+    </div>
+  </div>
+</div>
+
+<!-- MULTI ADDRESS MANAGER -->
+<div id="addrModal" class="hidden">
+  <div class="overlay" onclick="closeAddrModal()"></div>
+  <div style="position:fixed;inset:0;z-index:870;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
+    <div id="addrSheet" class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow-y:auto;pointer-events:all;padding-bottom:20px">
+      <div style="padding:10px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5">
+        <div class="pull-close-bar" onclick="closeAddrModal()"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800">My Addresses</h3>
+          <button class="btn btn-p btn-sm" onclick="openAddAddress()"><i class="fas fa-plus"></i> Add New</button>
+        </div>
+      </div>
+      <div id="addrList" style="padding:12px 14px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD ADDRESS FORM -->
+<div id="addAddrModal" class="hidden">
+  <div class="overlay" onclick="closeAddAddr()"></div>
+  <div style="position:fixed;inset:0;z-index:880;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;pointer-events:all;padding-bottom:20px">
+      <div style="padding:10px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5">
+        <div class="pull-close-bar" onclick="closeAddAddr()"></div>
+        <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800;margin-top:8px">Add New Address</h3>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none">
+          <div class="chip on" id="at-home" onclick="setAddrType('Home')">🏠 Home</div>
+          <div class="chip" id="at-work" onclick="setAddrType('Work')">🏢 Work</div>
+          <div class="chip" id="at-other" onclick="setAddrType('Other')">📍 Other</div>
+        </div>
+        <div class="fg" style="margin-bottom:11px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Full Name</label><input class="fc" id="aa-name" placeholder="Recipient name" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        <div class="fg" style="margin-bottom:11px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Phone</label><input class="fc" id="aa-phone" type="tel" placeholder="+91 98765 43210" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        <div class="fg" style="margin-bottom:11px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Address Line 1</label><input class="fc" id="aa-line1" placeholder="House/Flat no, Building name" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        <div class="fg" style="margin-bottom:11px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Address Line 2</label><input class="fc" id="aa-line2" placeholder="Street, Area, Landmark" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px">
+          <div><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">City</label><input class="fc" id="aa-city" placeholder="City" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+          <div><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">PIN Code</label><input class="fc" id="aa-pin" type="number" placeholder="400001" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        </div>
+        <div class="fg" style="margin-bottom:14px"><label style="font-size:10.5px;font-weight:700;color:var(--t2);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">State</label><input class="fc" id="aa-state" placeholder="Maharashtra" style="width:100%;padding:10px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t)"></div>
+        <button onclick="saveNewAddress()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--p),var(--pd));color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class="fas fa-save"></i> Save Address</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AVATAR UPLOAD MODAL -->
+<div id="avatarModal" class="hidden">
+  <div class="overlay" onclick="closeAvatarModal()"></div>
+  <div style="position:fixed;inset:0;z-index:870;display:flex;align-items:flex-end;pointer-events:none">
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;pointer-events:all;padding:16px 16px 32px">
+      <div class="pull-close-bar" onclick="closeAvatarModal()" style="margin-bottom:14px"></div>
+      <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800;margin-bottom:14px">Update Profile Photo</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div onclick="triggerImgPick('camera')" style="border:1.5px solid var(--b);border-radius:var(--rd);padding:18px;text-align:center;cursor:pointer;transition:var(--tr)" onmouseover="this.style.borderColor='var(--p)'" onmouseout="this.style.borderColor='var(--b)'">
+          <i class="fas fa-camera" style="font-size:28px;color:var(--p);margin-bottom:8px;display:block"></i>
+          <span style="font-size:13px;font-weight:700">Take Photo</span>
+        </div>
+        <div onclick="triggerImgPick('gallery')" style="border:1.5px solid var(--b);border-radius:var(--rd);padding:18px;text-align:center;cursor:pointer;transition:var(--tr)" onmouseover="this.style.borderColor='var(--p)'" onmouseout="this.style.borderColor='var(--b)'">
+          <i class="fas fa-image" style="font-size:28px;color:var(--p);margin-bottom:8px;display:block"></i>
+          <span style="font-size:13px;font-weight:700">Choose from Gallery</span>
+        </div>
+      </div>
+      <input type="file" id="avatarFileIn" accept="image/*" style="display:none" onchange="handleAvatarUpload(this)">
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -810,18 +990,26 @@ let banLen       = 5;
 // ============================================================
 //  SPLASH → AUTH
 // ============================================================
-window.addEventListener('load', ()=>{
-  setTimeout(()=>{
-    const sp = document.getElementById('splash');
-    sp.style.opacity='0';sp.style.transform='scale(1.06)';
-    setTimeout(()=>{ sp.style.display='none'; showAuth(); }, 500);
-  }, 2800);
+window.addEventListener('load', () => {
   initDarkMode();
-});
+  // Keep both auth and app hidden until splash ends
+  document.getElementById('authWrap').classList.add('hidden');
+  document.getElementById('app').classList.add('hidden');
 
-function showAuth(){
-  document.getElementById('authWrap').classList.remove('hidden');
-}
+  setTimeout(() => {
+    const sp = document.getElementById('splash');
+    sp.style.opacity = '0';
+    sp.style.transform = 'scale(1.06)';
+    setTimeout(async () => {
+      _authReady = true; // allow auth handler to run
+      // If Firebase already fired (fast network), handle now
+      if (_pendingUser !== undefined) {
+        await _handleAuthUser(_pendingUser);
+      }
+      // If still waiting (slow network), _handleAuthUser will fire when ready
+    }, 500);
+  }, 2800);
+});
 
 // ============================================================
 //  AUTH HELPERS
@@ -967,21 +1155,31 @@ async function doGoogle(){
 // ============================================================
 //  AUTH STATE LISTENER
 // ============================================================
-auth.onAuthStateChanged(async user=>{
-  // Skip if we're in the middle of signup (handled manually above)
-  if(window._signingUp) return;
-  if(user){
-    currentUser=user;
+// ── AUTH STATE GATE ──────────────────────────────────────────────────────
+// Holds the auth result until the splash is done
+let _authReady = false;
+let _pendingUser = undefined; // undefined = not yet received
+
+auth.onAuthStateChanged(async user => {
+  if (window._signingUp) return; // signup handled manually
+  _pendingUser = user; // store result
+  if (_authReady) await _handleAuthUser(user); // splash already done → act now
+});
+
+async function _handleAuthUser(user) {
+  if (user) {
+    currentUser = user;
     document.getElementById('authWrap').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
+    document.getElementById('splash').style.display = 'none';
     await loadAppData();
   } else {
-    // User logged out — show auth
-    currentUser=null;
+    currentUser = null;
     document.getElementById('app').classList.add('hidden');
+    document.getElementById('splash').style.display = 'none';
     document.getElementById('authWrap').classList.remove('hidden');
   }
-});
+}
 
 async function loadAppData(){
   // Profile — if user doc doesn't exist yet (e.g. Google sign-in), create it
@@ -1358,11 +1556,17 @@ function startCheckout(){
   document.getElementById('upiIdShow').textContent=upi;
   document.getElementById('qrCodeDiv').innerHTML='';
   new QRCode(document.getElementById('qrCodeDiv'),{text:`upi://pay?pa=${upi}&pn=Prince+Enterprise&am=${total}&cu=INR`,width:160,height:160});
-  // Address
-  db.ref('users/'+currentUser.uid).get().then(s=>{
-    const u=s.val()||{};
-    document.getElementById('codAddress').textContent=u.address||'No address saved. Update in profile.';
-  });
+  // Address — use selected address from multi-address system
+  const selA=userAddresses.find(a=>a.id===selectedAddrId)||userAddresses[0];
+  if(selA){
+    const full=[selA.line1,selA.line2,selA.city,selA.state,selA.pin].filter(Boolean).join(', ');
+    document.getElementById('codAddress').textContent=(selA.name?selA.name+' · ':'')+full;
+  } else {
+    db.ref('users/'+currentUser.uid).get().then(s=>{
+      const u=s.val()||{};
+      document.getElementById('codAddress').textContent=u.address||'No address saved. Please add one in Account > Addresses.';
+    });
+  }
   switchPay('upi');
   document.getElementById('payModal').classList.remove('hidden');
 }
@@ -1456,6 +1660,7 @@ function renderOrders(){
       </div>
       <div class="ord-actions">
         <div class="oa-btn oa-p" onclick="showOrderTrack('${o.orderId}')"><i class="fas fa-map-marker-alt"></i> Track</div>
+        <div class="oa-btn oa-p" onclick="openInvoice('${o.orderId||o.id}')"><i class="fas fa-file-invoice"></i> Invoice</div>
         <div class="oa-btn oa-p" onclick="contactWA('Order ${o.orderId}')"><i class="fab fa-whatsapp"></i> Support</div>
         ${o.status==='Delivered'?`<div class="oa-btn oa-r" onclick="showToast('Return request submitted')"><i class="fas fa-undo"></i> Return</div>`:''}
       </div>
@@ -1674,10 +1879,17 @@ function showSheet(title,html){
 }
 function closeSuccess(){document.getElementById('successModal').classList.add('hidden');}
 function doLogout(){
+  if(!confirm('Are you sure you want to logout?')) return;
   auth.signOut().then(()=>{
+    cart=[];wishlist=[];currentUser=null;orderHistory=[];notifications=[];
     document.getElementById('app').classList.add('hidden');
-    cart=[];wishlist=[];currentUser=null;orderHistory=[];
-    showAuth();switchAuth('login');
+    document.getElementById('authWrap').classList.remove('hidden');
+    switchAuth('login');
+    // Reset form
+    ['loginEmail','loginPass','sfName','slName','sEmail','sPhone','sPass','sCPass','sAddr'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value='';
+    });
+    document.getElementById('cartBadge').textContent='0';
   });
 }
 
@@ -1685,6 +1897,382 @@ function doLogout(){
 document.addEventListener('click',e=>{
   if(!e.target.closest('.hbar'))document.getElementById('sugBox').classList.add('hidden');
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SWIPE GESTURES
+// ═══════════════════════════════════════════════════════════════════════════
+(function initSwipeGestures(){
+  let ts=0,tx=0,ty=0;
+  const pages=['home','products','orders','wishlist','profile'];
+
+  document.addEventListener('touchstart',e=>{
+    ts=e.touches[0].clientX;
+    tx=e.touches[0].clientX;
+    ty=e.touches[0].clientY;
+  },{passive:true});
+
+  document.addEventListener('touchmove',e=>{tx=e.touches[0].clientX;},{passive:true});
+
+  document.addEventListener('touchend',e=>{
+    const dx=tx-ts, dy=e.changedTouches[0].clientY-ty;
+    const absX=Math.abs(dx), absY=Math.abs(dy);
+    // Only horizontal swipes (not vertical scroll)
+    if(absX>60 && absX>absY*1.5){
+      // Don't trigger if sliding product/banner
+      const active=document.querySelector('.pview.show');
+      const pg=active?active.id.replace('pg','').toLowerCase():'';
+      const idx=pages.indexOf(pg);
+      if(dx<0 && idx<pages.length-1) navTo(pages[idx+1]);  // swipe left → next tab
+      if(dx>0 && idx>0)              navTo(pages[idx-1]);  // swipe right → prev tab
+    }
+    // Pull-down on modals closes them
+    if(dy>80 && absX<40){
+      if(!document.getElementById('invoiceModal').classList.contains('hidden')) closeInvoice();
+      if(!document.getElementById('addrModal').classList.contains('hidden')) closeAddrModal();
+      if(!document.getElementById('addAddrModal').classList.contains('hidden')) closeAddAddr();
+      if(!document.getElementById('avatarModal').classList.contains('hidden')) closeAvatarModal();
+      if(!document.getElementById('payModal').classList.contains('hidden')) closePayModal();
+    }
+  },{passive:true});
+
+  // Sheet drag-to-close for panels
+  ['pdPanel','cartPanel'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    let start=0,dragging=false;
+    el.addEventListener('touchstart',e=>{start=e.touches[0].clientX;dragging=false;},{passive:true});
+    el.addEventListener('touchmove',e=>{
+      const dx=start-e.touches[0].clientX;
+      if(dx<-30){dragging=true;el.style.transform='translateX('+Math.abs(dx)+'px)';}
+    },{passive:true});
+    el.addEventListener('touchend',e=>{
+      if(dragging && start-e.changedTouches[0].clientX < -80){
+        el.style.transform='';
+        if(id==='pdPanel') closePD();
+        if(id==='cartPanel') closeCart();
+      } else { el.style.transform=''; }
+      dragging=false;
+    },{passive:true});
+  });
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MULTI-ADDRESS SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+let userAddresses=[], selectedAddrId=null, _addrType='Home';
+
+async function loadAddresses(){
+  if(!currentUser)return;
+  const snap=await db.ref('addresses/'+currentUser.uid).get();
+  userAddresses=snap.val()?Object.values(snap.val()):[];
+  // Migrate old single address
+  if(!userAddresses.length){
+    const uSnap=await db.ref('users/'+currentUser.uid+'/address').get();
+    const old=uSnap.val();
+    if(old&&old.length>3){
+      const migrated={id:'addr0',type:'Home',line1:old,city:'',pin:'',state:'',phone:'',name:'Default',isDefault:true,createdAt:Date.now()};
+      userAddresses=[migrated];
+      await db.ref('addresses/'+currentUser.uid+'/addr0').set(migrated);
+    }
+  }
+  // Update badge
+  const badge=document.getElementById('addrCountBadge');
+  if(badge) badge.textContent=userAddresses.length;
+  // Auto-select default
+  const def=userAddresses.find(a=>a.isDefault)||userAddresses[0];
+  if(def) selectedAddrId=def.id;
+}
+
+function openAddrModal(){
+  loadAddresses().then(renderAddrList);
+  document.getElementById('addrModal').classList.remove('hidden');
+  initSheetSwipe('addrSheet',closeAddrModal);
+}
+function closeAddrModal(){document.getElementById('addrModal').classList.add('hidden');}
+
+function renderAddrList(){
+  const el=document.getElementById('addrList');
+  if(!el)return;
+  if(!userAddresses.length){
+    el.innerHTML=`<div style="text-align:center;padding:30px;color:var(--m)"><i class="fas fa-map-marker-alt" style="font-size:36px;opacity:.3;display:block;margin-bottom:12px"></i><p style="font-size:13px">No saved addresses</p><p style="font-size:12px;margin-top:4px">Add one to speed up checkout</p></div>`;
+    return;
+  }
+  el.innerHTML=userAddresses.map(a=>`
+    <div class="addr-item ${a.id===selectedAddrId?'selected':''}" onclick="selectAddr('${a.id}')">
+      <div class="addr-type">${a.type==='Home'?'🏠':a.type==='Work'?'🏢':'📍'} ${a.type}${a.isDefault?' · Default':''}</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:2px">${a.name||'—'} ${a.phone?'· '+a.phone:''}</div>
+      <div class="addr-text">${[a.line1,a.line2,a.city,a.state,a.pin].filter(Boolean).join(', ')}</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        ${!a.isDefault?`<span onclick="event.stopPropagation();setDefaultAddr('${a.id}')" style="font-size:11px;color:var(--p);font-weight:700;cursor:pointer">Set Default</span>`:''}
+        <span class="addr-del" onclick="event.stopPropagation();deleteAddr('${a.id}')"><i class="fas fa-trash"></i></span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectAddr(id){selectedAddrId=id;renderAddrList();}
+
+async function setDefaultAddr(id){
+  userAddresses.forEach(a=>a.isDefault=(a.id===id));
+  await db.ref('addresses/'+currentUser.uid).set(Object.fromEntries(userAddresses.map(a=>[a.id,a])));
+  renderAddrList();showToast('Default address updated');
+}
+
+async function deleteAddr(id){
+  if(userAddresses.length<=1){showToast('You need at least one address');return;}
+  userAddresses=userAddresses.filter(a=>a.id!==id);
+  await db.ref('addresses/'+currentUser.uid+'/'+id).remove();
+  if(selectedAddrId===id) selectedAddrId=userAddresses[0]?.id||null;
+  renderAddrList();
+  const badge=document.getElementById('addrCountBadge');
+  if(badge) badge.textContent=userAddresses.length;
+  showToast('Address removed');
+}
+
+function openAddAddress(){document.getElementById('addAddrModal').classList.remove('hidden');}
+function closeAddAddr(){document.getElementById('addAddrModal').classList.add('hidden');}
+function setAddrType(t){
+  _addrType=t;
+  ['Home','Work','Other'].forEach(x=>document.getElementById('at-'+x.toLowerCase())?.classList.toggle('on',x===t));
+}
+
+async function saveNewAddress(){
+  const name=document.getElementById('aa-name').value.trim();
+  const line1=document.getElementById('aa-line1').value.trim();
+  const city=document.getElementById('aa-city').value.trim();
+  const pin=document.getElementById('aa-pin').value.trim();
+  if(!name||!line1||!city||!pin){showToast('Please fill required fields');return;}
+  const id='addr'+Date.now();
+  const addr={
+    id,type:_addrType,name,
+    phone:document.getElementById('aa-phone').value.trim(),
+    line1,line2:document.getElementById('aa-line2').value.trim(),
+    city,pin,state:document.getElementById('aa-state').value.trim(),
+    isDefault:userAddresses.length===0,
+    createdAt:Date.now()
+  };
+  await db.ref('addresses/'+currentUser.uid+'/'+id).set(addr);
+  userAddresses.push(addr);
+  if(addr.isDefault) selectedAddrId=id;
+  closeAddAddr();renderAddrList();
+  const badge=document.getElementById('addrCountBadge');
+  if(badge) badge.textContent=userAddresses.length;
+  showToast('Address saved!');
+  // Auto-fill COD address display
+  const full=[addr.line1,addr.line2,addr.city,addr.state,addr.pin].filter(Boolean).join(', ');
+  const codEl=document.getElementById('codAddress');
+  if(codEl) codEl.textContent=addr.name+' · '+full;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INVOICE SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+function openInvoice(ordId){
+  const o=orderHistory.find(x=>x.id===ordId||x.orderId===ordId);
+  if(!o){showToast('Order not found');return;}
+  const addr=userAddresses.find(a=>a.id===selectedAddrId)||userAddresses[0];
+  const addrStr=addr?[addr.line1,addr.line2,addr.city,addr.state,addr.pin].filter(Boolean).join(', '):'—';
+  const subtotal=(o.items||[]).reduce((s,i)=>s+i.price*(i.qty||1),0);
+  const disc=0; const gst=Math.round(subtotal*0.05);
+  const total=o.total||subtotal;
+  const html=`
+  <div class="invoice-wrap" id="invPrint">
+    <div class="inv-hdr">
+      <div class="inv-logo">
+        <div class="inv-logo-ico"><i class="fas fa-bolt"></i></div>
+        <div class="inv-logo-txt"><h3>Prince Enterprise</h3><p>LED Lights &amp; Electronics</p></div>
+      </div>
+      <div class="inv-meta">
+        <strong>TAX INVOICE</strong>
+        #${o.orderId}<br>
+        Date: ${new Date(o.createdAt||Date.now()).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}<br>
+        Payment: ${o.paymentMethod||'COD'}
+      </div>
+    </div>
+    <div class="inv-party">
+      <div class="inv-party-box">
+        <h4>From (Seller)</h4>
+        <p><strong>Prince Enterprise</strong><br>LED Lights &amp; Electronics<br>India<br>GST: 27XXXXX1234Z1</p>
+      </div>
+      <div class="inv-party-box">
+        <h4>Bill To (Customer)</h4>
+        <p><strong>${o.userEmail||'Customer'}</strong><br>${addrStr}</p>
+      </div>
+    </div>
+    <table class="inv-tbl">
+      <thead><tr><th>#</th><th>Product</th><th>Qty</th><th>Rate</th><th>Amount</th></tr></thead>
+      <tbody>
+        ${(o.items||[]).map((item,i)=>`<tr><td>${i+1}</td><td>${item.name}</td><td>${item.qty||1}</td><td>₹${item.price}</td><td>₹${item.price*(item.qty||1)}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="inv-total">
+      <div class="inv-total-row"><span>Subtotal</span><span>₹${subtotal}</span></div>
+      <div class="inv-total-row"><span>Discount</span><span style="color:#26a541">- ₹${disc}</span></div>
+      <div class="inv-total-row"><span>Delivery</span><span style="color:#26a541">${total>=500?'FREE':'₹50'}</span></div>
+      <div class="inv-total-row"><span>GST (5%)</span><span>₹${gst}</span></div>
+      <div class="inv-total-row final"><span>Total Amount</span><span>₹${total}</span></div>
+    </div>
+    <div class="inv-foot">
+      <p>Thank you for shopping with Prince Enterprise! 💡</p>
+      <p style="margin-top:4px">For queries: WhatsApp +91 98765 43210 | This is a computer generated invoice.</p>
+    </div>
+  </div>`;
+  document.getElementById('invoiceContent').innerHTML=html;
+  document.getElementById('invoiceModal').classList.remove('hidden');
+  initSheetSwipe('invoiceSheet',closeInvoice);
+}
+function closeInvoice(){document.getElementById('invoiceModal').classList.add('hidden');}
+
+function downloadInvoice(){
+  const printContent=document.getElementById('invPrint');
+  if(!printContent){showToast('Invoice not loaded');return;}
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Invoice</title>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@700;800;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>body{margin:0;font-family:'Nunito',sans-serif}${document.querySelector('style').textContent}</style>
+    </head><body>${printContent.outerHTML}<script>window.print();window.close();<\/script></body></html>`);
+  win.document.close();
+  showToast('Opening print dialog…');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// AVATAR / IMAGE UPLOAD
+// ═══════════════════════════════════════════════════════════════════════════
+function openAvatarModal(){document.getElementById('avatarModal').classList.remove('hidden');}
+function closeAvatarModal(){document.getElementById('avatarModal').classList.add('hidden');}
+
+function triggerImgPick(src){
+  const inp=document.getElementById('avatarFileIn');
+  if(src==='camera') inp.setAttribute('capture','environment');
+  else inp.removeAttribute('capture');
+  inp.click();
+  closeAvatarModal();
+}
+
+async function handleAvatarUpload(input){
+  const file=input.files[0]; if(!file)return;
+  if(file.size>2*1024*1024){showToast('Image too large. Max 2MB.');return;}
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const base64=e.target.result;
+    // Store base64 in Firebase (for demo — in production use Firebase Storage)
+    await db.ref('users/'+currentUser.uid+'/photoBase64').set(base64);
+    // Update UI
+    const img=document.getElementById('profAvImg');
+    const txt=document.getElementById('profAvTxt');
+    if(img){img.src=base64;img.style.display='block';}
+    if(txt)txt.style.display='none';
+    showToast('Profile photo updated!');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function loadAvatar(){
+  if(!currentUser)return;
+  const snap=await db.ref('users/'+currentUser.uid+'/photoBase64').get();
+  if(snap.val()){
+    const img=document.getElementById('profAvImg');
+    const txt=document.getElementById('profAvTxt');
+    if(img){img.src=snap.val();img.style.display='block';}
+    if(txt)txt.style.display='none';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PUSH NOTIFICATIONS
+// ═══════════════════════════════════════════════════════════════════════════
+function askNotifPermission(){
+  // Show custom prompt first
+  setTimeout(()=>{
+    if(Notification && Notification.permission==='default'){
+      document.getElementById('notifPrompt').classList.remove('hidden');
+    }
+  }, 4000);
+}
+
+async function enableNotifs(){
+  document.getElementById('notifPrompt').classList.add('hidden');
+  if(!('Notification' in window)){showToast('Notifications not supported in this browser');return;}
+  const perm=await Notification.requestPermission();
+  if(perm==='granted'){
+    showToast('Notifications enabled! ✅');
+    await db.ref('users/'+currentUser.uid+'/notifEnabled').set(true);
+    // Demo notification
+    setTimeout(()=>{
+      new Notification('Welcome to Prince Enterprise! 💡',{body:'Flash Sale: Up to 60% off LED lights today!',icon:'/favicon.ico'});
+    },1000);
+  } else {
+    showToast('You can enable notifications from browser settings');
+  }
+}
+
+function sendLocalNotif(title,body){
+  if(Notification && Notification.permission==='granted'){
+    new Notification(title,{body,icon:'/favicon.ico'});
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SHEET SWIPE-TO-CLOSE HELPER
+// ═══════════════════════════════════════════════════════════════════════════
+function initSheetSwipe(sheetId, closeFn){
+  const el=document.getElementById(sheetId); if(!el)return;
+  let startY=0, curY=0, dragging=false;
+  el.addEventListener('touchstart',e=>{startY=e.touches[0].clientY;dragging=true;},{passive:true});
+  el.addEventListener('touchmove',e=>{
+    if(!dragging)return;
+    curY=e.touches[0].clientY;
+    const dy=curY-startY;
+    if(dy>0) el.style.transform='translateY('+dy+'px)';
+  },{passive:true});
+  el.addEventListener('touchend',()=>{
+    const dy=curY-startY;
+    if(dy>100) closeFn();
+    else el.style.transform='';
+    dragging=false;
+  },{passive:true});
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PATCH loadAppData to also load addresses and avatar
+// ═══════════════════════════════════════════════════════════════════════════
+const _origLoadAppData = loadAppData;
+loadAppData = async function() {
+  await _origLoadAppData();
+  await loadAddresses();
+  await loadAvatar();
+  askNotifPermission();
+  // Update COD address with best address
+  const def=userAddresses.find(a=>a.isDefault)||userAddresses[0];
+  if(def){
+    const full=[def.line1,def.line2,def.city,def.state,def.pin].filter(Boolean).join(', ');
+    const codEl=document.getElementById('codAddress');
+    if(codEl) codEl.textContent=(def.name?def.name+' · ':'')+full;
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LED LIGHT PARTICLE EFFECT on splash  
+// ═══════════════════════════════════════════════════════════════════════════
+(function createLEDParticles(){
+  const splash=document.getElementById('splash');
+  if(!splash)return;
+  const colors=['#ffe500','#2874f0','#fff','#42a5f5','#ff7043'];
+  for(let i=0;i<18;i++){
+    const dot=document.createElement('div');
+    const size=Math.random()*4+2;
+    const x=Math.random()*100, y=Math.random()*100;
+    const delay=Math.random()*3, dur=2+Math.random()*3;
+    dot.style.cssText=`position:absolute;width:${size}px;height:${size}px;border-radius:50%;left:${x}%;top:${y}%;background:${colors[Math.floor(Math.random()*colors.length)]};opacity:.7;animation:ledPulse ${dur}s ${delay}s ease infinite;pointer-events:none`;
+    splash.appendChild(dot);
+  }
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ALSO: fix openAddressBook to use new system
+// ═══════════════════════════════════════════════════════════════════════════
+function openAddressBook(){ openAddrModal(); }
+
 </script>
 </body>
 </html>
