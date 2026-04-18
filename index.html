@@ -40,7 +40,9 @@ a{text-decoration:none;color:inherit}img{max-width:100%;display:block}
 button{cursor:pointer;border:none;background:none;font-family:inherit}
 input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .hidden{display:none!important}.gone{opacity:0;pointer-events:none}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:800;backdrop-filter:blur(2px);transition:var(--tr)}
+
+/* Adjusted overlay: no blur, purely semi-transparent for compatibility */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:850;transition:var(--tr)}
 
 /* === SPLASH === */
 #splash{position:fixed;inset:0;z-index:9999;background:linear-gradient(145deg,#060d2e 0%,#0a1850 35%,#1565c0 70%,#2874f0 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
@@ -208,7 +210,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .obtn:hover{transform:scale(1.06)}
 
 /* === PRODUCT DETAIL PANEL === */
-#pdPanel{position:fixed;inset:0;z-index:600;background:var(--bg);overflow-y:auto;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+#pdPanel{position:fixed;inset:0;z-index:800;background:var(--bg);overflow-y:auto;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 #pdPanel.show{transform:translateX(0)}
 .pdhdr{position:sticky;top:0;z-index:10;background:var(--p);padding:10px;display:flex;align-items:center;gap:7px}
 .bakbtn{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0;transition:var(--tr)}
@@ -242,9 +244,9 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .rev-date{font-size:11px;color:var(--m);margin-left:auto}
 .rev-body{font-size:12.5px;color:var(--t2);line-height:1.4}
 .pdsticky{position:sticky;bottom:0;background:var(--c);padding:9px 11px;display:flex;gap:7px;border-top:1px solid var(--b);z-index:10;box-shadow:0 -4px 16px rgba(0,0,0,.08)}
-.pdcart{flex:1;padding:12px;background:#ffe500;color:#212121;border-radius:var(--rd);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;transition:var(--tr)}
+.pdcart{flex:1;padding:12px;background:#ffe500;color:#212121;border-radius:var(--rd);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;transition:var(--tr);cursor:pointer}
 .pdcart:hover{background:#f0d600}
-.pdbuy{flex:1;padding:12px;background:var(--s);color:#fff;border-radius:var(--rd);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;transition:var(--tr)}
+.pdbuy{flex:1;padding:12px;background:var(--s);color:#fff;border-radius:var(--rd);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;transition:var(--tr);cursor:pointer}
 .pdbuy:hover{background:#e55000}
 .qty-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--c);margin-top:8px;border-bottom:1px solid var(--d)}
 .qty-row label{font-size:12px;font-weight:700;color:var(--t2)}
@@ -261,7 +263,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .offer-tag i{color:var(--g);margin-top:1px;flex-shrink:0}
 
 /* === CART PANEL === */
-#cartPanel{position:fixed;inset:0;z-index:600;background:var(--bg);overflow-y:auto;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+#cartPanel{position:fixed;inset:0;z-index:800;background:var(--bg);overflow-y:auto;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 #cartPanel.show{transform:translateX(0)}
 .cpanel-hdr{position:sticky;top:0;z-index:10;background:var(--p);padding:12px 10px;color:#fff;display:flex;align-items:center;gap:9px}
 .cpanel-hdr h2{font-family:'Exo 2',sans-serif;font-size:17px;font-weight:800}
@@ -304,7 +306,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .tstep-d{font-size:11.5px;color:var(--m)}
 
 /* === PAYMENT MODAL === */
-#payModal{position:fixed;inset:0;z-index:850;display:flex;align-items:flex-end;justify-content:center}
+#payModal{position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;justify-content:center}
 #payModal .pm-sheet{background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:0 0 20px;animation:sheetUp .35s cubic-bezier(.4,0,.2,1) both;box-shadow:0 -8px 40px rgba(0,0,0,.25)}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .pm-hdr{padding:16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5}
@@ -397,7 +399,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .oa-r:hover{background:var(--r);color:#fff}
 
 /* === SUCCESS MODAL === */
-#successModal{position:fixed;inset:0;z-index:900;display:flex;align-items:center;justify-content:center;padding:20px}
+#successModal{position:fixed;inset:0;z-index:920;display:flex;align-items:center;justify-content:center;padding:20px}
 .suc-card{background:var(--c);border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:sucPop .5s cubic-bezier(.34,1.56,.64,1) both;box-shadow:var(--sh3)}
 @keyframes sucPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
 .suc-ico{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#43a047,#2e7d32);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:sucBounce .6s cubic-bezier(.34,1.56,.64,1) .3s both}
@@ -407,7 +409,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .suc-card p{font-size:13px;color:var(--m);line-height:1.5;margin-bottom:18px}
 
 /* === TOAST === */
-#toast{position:fixed;bottom:calc(var(--nh)+12px);left:50%;transform:translateX(-50%) translateY(20px);z-index:950;background:var(--t);color:var(--c);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;box-shadow:var(--sh3);opacity:0;transition:all .3s ease;white-space:nowrap;pointer-events:none;max-width:90vw}
+#toast{position:fixed;bottom:calc(var(--nh)+12px);left:50%;transform:translateX(-50%) translateY(20px);z-index:999;background:var(--t);color:var(--c);padding:10px 18px;border-radius:20px;font-size:13px;font-weight:600;box-shadow:var(--sh3);opacity:0;transition:all .3s ease;white-space:nowrap;pointer-events:none;max-width:90vw}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* === PAGE VIEWS === */
@@ -499,7 +501,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .chat-fab:hover{transform:scale(1.12)!important;animation:none}
 
 /* 2. Compare products */
-.compare-bar{position:fixed;bottom:var(--nh);left:0;right:0;z-index:650;background:linear-gradient(135deg,var(--p),var(--pd));padding:10px 14px;display:flex;align-items:center;gap:9px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.compare-bar{position:fixed;bottom:var(--nh);left:0;right:0;z-index:750;background:linear-gradient(135deg,var(--p),var(--pd));padding:10px 14px;display:flex;align-items:center;gap:9px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .compare-bar.show{transform:translateY(0)}
 .compare-item{width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,.2);border:1.5px dashed rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
 .compare-item img{width:100%;height:100%;object-fit:cover}
@@ -663,7 +665,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
       </div>
 
       <!-- Offer Strip -->
-      <div class="ostrip">
+      <div class="ostrip" id="offerStrip">
         <div class="oin">
           <div><h3>🎁 First Order Discount</h3><p>Use code PRINCE10 for 10% off</p></div>
           <span class="obtn" onclick="copyCode('PRINCE10')">Copy Code</span>
@@ -859,7 +861,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 <!-- INVOICE MODAL -->
 <div id="invoiceModal" class="hidden">
   <div class="overlay" onclick="closeInvoice()"></div>
-  <div style="position:fixed;inset:0;z-index:870;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
+  <div style="position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
     <div id="invoiceSheet" class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;pointer-events:all;padding-bottom:20px">
       <div style="padding:10px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5">
         <div class="pull-close-bar" onclick="closeInvoice()"></div>
@@ -878,7 +880,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 
 <!-- PUSH NOTIFICATION PERMISSION PROMPT -->
 <div id="notifPrompt" class="hidden">
-  <div style="position:fixed;bottom:calc(var(--nh)+12px);left:12px;right:12px;z-index:850;background:var(--c);border-radius:14px;padding:14px 16px;box-shadow:var(--sh3);display:flex;align-items:center;gap:11px;border:1.5px solid var(--pl);animation:spFd .4s ease both">
+  <div style="position:fixed;bottom:calc(var(--nh)+12px);left:12px;right:12px;z-index:930;background:var(--c);border-radius:14px;padding:14px 16px;box-shadow:var(--sh3);display:flex;align-items:center;gap:11px;border:1.5px solid var(--pl);animation:spFd .4s ease both">
     <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ff7043,var(--p));display:flex;align-items:center;justify-content:center;flex-shrink:0"><i class="fas fa-bell" style="color:#fff;font-size:18px"></i></div>
     <div style="flex:1"><div style="font-size:13px;font-weight:700;margin-bottom:2px">Enable Notifications</div><div style="font-size:11.5px;color:var(--m)">Get alerts for orders, deals &amp; offers</div></div>
     <div style="display:flex;gap:6px;flex-shrink:0">
@@ -891,7 +893,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 <!-- MULTI ADDRESS MANAGER -->
 <div id="addrModal" class="hidden">
   <div class="overlay" onclick="closeAddrModal()"></div>
-  <div style="position:fixed;inset:0;z-index:870;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
+  <div style="position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
     <div id="addrSheet" class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:88vh;overflow-y:auto;pointer-events:all;padding-bottom:20px">
       <div style="padding:10px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5">
         <div class="pull-close-bar" onclick="closeAddrModal()"></div>
@@ -908,7 +910,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 <!-- ADD ADDRESS FORM -->
 <div id="addAddrModal" class="hidden">
   <div class="overlay" onclick="closeAddAddr()"></div>
-  <div style="position:fixed;inset:0;z-index:880;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
+  <div style="position:fixed;inset:0;z-index:910;display:flex;align-items:flex-end;justify-content:center;pointer-events:none">
     <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:90vh;overflow-y:auto;pointer-events:all;padding-bottom:20px">
       <div style="padding:10px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5">
         <div class="pull-close-bar" onclick="closeAddAddr()"></div>
@@ -938,7 +940,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 <!-- AVATAR UPLOAD MODAL -->
 <div id="avatarModal" class="hidden">
   <div class="overlay" onclick="closeAvatarModal()"></div>
-  <div style="position:fixed;inset:0;z-index:870;display:flex;align-items:flex-end;pointer-events:none">
+  <div style="position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;pointer-events:none">
     <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;pointer-events:all;padding:16px 16px 32px">
       <div class="pull-close-bar" onclick="closeAvatarModal()" style="margin-bottom:14px"></div>
       <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800;margin-bottom:14px">Update Profile Photo</h3>
@@ -986,7 +988,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 <!-- REFERRAL MODAL -->
 <div id="referralModal" class="hidden">
   <div class="overlay" onclick="closeReferral()"></div>
-  <div style="position:fixed;inset:0;z-index:870;display:flex;align-items:flex-end;pointer-events:none">
+  <div style="position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;pointer-events:none">
     <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;pointer-events:all;padding-bottom:24px">
       <div style="padding:12px 16px;border-bottom:1px solid var(--d)">
         <div class="pull-close-bar" onclick="closeReferral()"></div>
@@ -1010,7 +1012,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 </div>
 
 <!-- PRICE DROP ALERT TOAST -->
-<div id="pdaToast" class="hidden" style="position:fixed;top:calc(var(--hh)+8px);left:10px;right:10px;z-index:850;background:linear-gradient(135deg,#e65100,#bf360c);color:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(230,81,0,.4);animation:spFd .4s ease">
+<div id="pdaToast" class="hidden" style="position:fixed;top:calc(var(--hh)+8px);left:10px;right:10px;z-index:999;background:linear-gradient(135deg,#e65100,#bf360c);color:#fff;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(230,81,0,.4);animation:spFd .4s ease">
   <i class="fas fa-arrow-down" style="font-size:18px"></i>
   <div><div style="font-size:13px;font-weight:800">Price Drop Alert! 🔥</div><div style="font-size:11.5px;opacity:.9" id="pdaMsg">Price dropped on your wishlist item</div></div>
   <div onclick="document.getElementById('pdaToast').classList.add('hidden')" style="margin-left:auto;cursor:pointer;opacity:.8;font-size:18px">✕</div>
@@ -1250,8 +1252,11 @@ async function loadAppData(){
     }
     const name = udata.name || currentUser.displayName || currentUser.email.split('@')[0] || 'User';
     const email = udata.email || currentUser.email || '';
-    document.getElementById('profAv').textContent = (name[0]||'U').toUpperCase();
-    document.getElementById('profAvTxt').textContent = (name[0]||'U').toUpperCase();
+    
+    // Explicitly target profAvTxt to not overwrite the image elements
+    const avTxt = document.getElementById('profAvTxt');
+    if (avTxt) avTxt.textContent = (name[0]||'U').toUpperCase();
+    
     document.getElementById('profName').textContent = name;
     document.getElementById('profEmail').textContent = email;
   } catch(e) { console.error('Profile Error', e); }
@@ -1268,12 +1273,11 @@ async function loadAppData(){
     if(pSnap.val()){
       allProducts=Object.entries(pSnap.val()).map(([id,p])=>({id,...p}));
     } else {
-      allProducts=defaultProducts();
-      allProducts.forEach(p=>db.ref('products/'+p.id).set(p));
+      allProducts=[]; 
     }
   } catch(e) { 
     console.error('Products Error', e); 
-    allProducts=defaultProducts(); 
+    allProducts=[]; 
   }
 
   // Cart
@@ -1293,7 +1297,7 @@ async function loadAppData(){
     const oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
     orderHistory=oSnap.val()?Object.entries(oSnap.val()).map(([id,o])=>({id,...o})).reverse():[];
   } catch(e) { 
-    console.error('Orders Error (Check Firebase Indexing)', e); 
+    console.error('Orders Error', e); 
     orderHistory=[]; 
   }
 
@@ -1306,8 +1310,8 @@ async function loadAppData(){
   // Notifications
   try {
     const nSnap=await db.ref('notifications/'+currentUser.uid).get();
-    notifications=nSnap.val()?Object.values(nSnap.val()).reverse():defaultNotifs();
-  } catch(e) { notifications=defaultNotifs(); }
+    notifications=nSnap.val()?Object.values(nSnap.val()).reverse():[];
+  } catch(e) { notifications=[]; }
 
   try { await loadAddresses(); } catch(e) { console.error('Address error', e); }
   try { await loadAvatar(); } catch(e) { console.error('Avatar error', e); }
@@ -1328,19 +1332,7 @@ async function loadAppData(){
 // ============================================================
 //  DEFAULT DATA
 // ============================================================
-function defaultProducts(){
-  return [
-    {id:'p1',name:'Prince 9W LED Bulb Warm White',category:'Bulbs',price:79,originalPrice:149,discount:47,rating:4.5,reviews:128,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:50,isNew:true,isBestSeller:true,description:'Energy efficient 9W LED bulb with warm white light. 270° beam angle. Lasts 25,000 hours.',wattage:'9W',voltage:'220-240V',color:'Warm White 3000K',warranty:'2 Years'},
-    {id:'p2',name:'RGB LED Strip 5M with Remote',category:'Strip Lights',price:399,originalPrice:799,discount:50,rating:4.3,reviews:89,image:'https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=400',stock:30,isNew:true,isFlashDeal:true,description:'5 meter RGB LED strip with 44-key remote. Waterproof IP65. Self-adhesive backing.',wattage:'24W',voltage:'12V DC',color:'RGB Multicolor',warranty:'1 Year'},
-    {id:'p3',name:'Prince LED Panel Light 12W',category:'Panel Lights',price:299,originalPrice:550,discount:46,rating:4.6,reviews:214,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:45,isBestSeller:true,isFlashDeal:true,description:'Square panel light 12W ultra slim. Flicker-free. Perfect for office and home ceilings.',wattage:'12W',voltage:'220V',color:'Day White 6500K',warranty:'3 Years'},
-    {id:'p4',name:'LED Street Light 30W Outdoor',category:'Outdoor',price:899,originalPrice:1599,discount:44,rating:4.4,reviews:67,image:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400',stock:20,description:'Heavy duty 30W outdoor street light. IP66 waterproof. Wide beam 120°.',wattage:'30W',voltage:'220V',color:'Cool White 6500K',warranty:'2 Years'},
-    {id:'p5',name:'Smart WiFi LED Bulb 9W RGB',category:'Smart Lights',price:549,originalPrice:999,discount:45,rating:4.7,reviews:156,image:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400',stock:35,isNew:true,isBestSeller:true,description:'Works with Google Home & Alexa. 16 million colors. Voice &amp; app controlled.',wattage:'9W',voltage:'220V',color:'RGB + Warm White',warranty:'1 Year'},
-    {id:'p6',name:'LED Tube Light 18W 4ft',category:'Tube Lights',price:199,originalPrice:350,discount:43,rating:4.2,reviews:98,image:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',stock:60,isBestSeller:true,description:'T8 LED tube light 18W replacing 40W fluorescent. Instant start. No flicker.',wattage:'18W',voltage:'220V',color:'Cool White',warranty:'2 Years'},
-    {id:'p7',name:'LED Downlight 7W Recessed',category:'Downlights',price:149,originalPrice:280,discount:47,rating:4.4,reviews:175,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:80,isFlashDeal:true,description:'7W recessed LED downlight. Cut-out 75mm. Sleek design for modern interiors.',wattage:'7W',voltage:'220V',color:'Neutral White 4000K',warranty:'2 Years'},
-    {id:'p8',name:'Solar LED Garden Light',category:'Outdoor',price:499,originalPrice:899,discount:44,rating:4.1,reviews:44,image:'https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=400',stock:25,isNew:true,description:'Solar powered garden stake light. Auto on/off. Weatherproof.',wattage:'2W Solar',voltage:'Solar',color:'Warm White',warranty:'1 Year'}
-  ];
-}
-
+// Categories
 const categories=[
   {name:'Bulbs',icon:'💡',color:'#fff8e1',iconColor:'#f57f17'},
   {name:'Strip Lights',icon:'🌈',color:'#f3e5f5',iconColor:'#7b1fa2'},
@@ -1351,13 +1343,6 @@ const categories=[
   {name:'Downlights',icon:'🔆',color:'#fff3e0',iconColor:'#e65100'},
   {name:'Decorative',icon:'✨',color:'#fbe9e7',iconColor:'#bf360c'}
 ];
-
-function defaultNotifs(){
-  return [
-    {id:'n1',title:'Welcome to Prince Enterprise!',desc:'Get 10% off your first order with code PRINCE10',time:'Just now',icon:'🎉',iconBg:'#e8f5e9',iconColor:'#2e7d32',unread:true},
-    {id:'n2',title:'Flash Sale Alert 🔥',desc:'Up to 60% off on LED products. Offer ends tonight!',time:'1h ago',icon:'⚡',iconBg:'#fff8e1',iconColor:'#f57f17',unread:true}
-  ];
-}
 
 // ============================================================
 //  RENDER
@@ -1389,22 +1374,29 @@ function renderCategories(){
 function renderFlashDeals(){
   const el=document.getElementById('flashDeals');
   const deals=allProducts.filter(p=>p.isFlashDeal);
-  el.innerHTML=deals.map(p=>pcCard(p,'pc-sm')).join('');
+  if(!deals.length) { el.parentElement.style.display = 'none'; }
+  else { el.parentElement.style.display = 'block'; el.innerHTML=deals.map(p=>pcCard(p,'pc-sm')).join(''); }
 }
 function renderNewArrivals(){
   const el=document.getElementById('newArrivals');
   const arr=allProducts.filter(p=>p.isNew);
-  el.innerHTML=arr.map(p=>pcCard(p,'pc-sm')).join('');
+  if(!arr.length) { el.parentElement.style.display = 'none'; }
+  else { el.parentElement.style.display = 'block'; el.innerHTML=arr.map(p=>pcCard(p,'pc-sm')).join(''); }
 }
 function renderBestSellers(){
   const el=document.getElementById('bestSellers');
   const bs=allProducts.filter(p=>p.isBestSeller);
-  el.innerHTML=bs.map(p=>pcCard(p,'')).join('');
+  if(!bs.length) { el.parentElement.style.display = 'none'; }
+  else { el.parentElement.style.display = 'block'; el.innerHTML=bs.map(p=>pcCard(p,'')).join(''); }
 }
 function renderAllProducts(filtered=null){
   const el=document.getElementById('allProductsGrid');
   const list=filtered||allProducts;
-  el.innerHTML=list.map(p=>pcCard(p,'')).join('');
+  if(!list.length) {
+    el.innerHTML = `<div class="page-empty" style="grid-column:1/-1"><i class="fas fa-box-open"></i><h3>No Products</h3><p>Check back later.</p></div>`;
+  } else {
+    el.innerHTML=list.map(p=>pcCard(p,'')).join('');
+  }
   const chips=document.getElementById('filterChips');
   chips.innerHTML=`<span class="chip ${!filtered?'on':''}" onclick="renderAllProducts()">All</span>`+
     categories.map(c=>`<span class="chip" onclick="filterCat('${c.name}')">${c.name}</span>`).join('');
@@ -1426,7 +1418,7 @@ function pcCard(p,cls){
     </div>
     <div class="pci">
       <div class="pcn">${p.name}</div>
-      <div class="pcrat"><span class="ratb"><i class="fas fa-star" style="font-size:8px"></i> ${p.rating}</span><span class="ratc">(${p.reviews})</span></div>
+      <div class="pcrat"><span class="ratb"><i class="fas fa-star" style="font-size:8px"></i> ${p.rating||0}</span><span class="ratc">(${p.reviews||0})</span></div>
       <div class="pcprice">
         <span class="pcur">₹${p.price}</span>
         ${p.originalPrice?`<span class="porig">₹${p.originalPrice}</span><span class="poff">${p.discount}% off</span>`:''}
@@ -1464,9 +1456,9 @@ function openPD(pid){
         ${p.originalPrice?`<span class="pdorig">₹${p.originalPrice}</span><span class="pdoff">${p.discount}% off</span>`:''}
       </div>
       <div class="pdrating">
-        <div class="ratb"><i class="fas fa-star"></i> ${p.rating}</div>
-        <span style="font-size:13px;color:var(--m)">${p.reviews} ratings</span>
-        ${p.stock<=5?`<span style="font-size:11px;color:var(--r);font-weight:700;margin-left:auto">Only ${p.stock} left!</span>`:'<span style="font-size:11px;color:var(--g);font-weight:700;margin-left:auto">In Stock ✓</span>'}
+        <div class="ratb"><i class="fas fa-star"></i> ${p.rating||0}</div>
+        <span style="font-size:13px;color:var(--m)">${p.reviews||0} ratings</span>
+        ${p.stock<=5?`<span style="font-size:11px;color:var(--r);font-weight:700;margin-left:auto">Only ${p.stock||0} left!</span>`:'<span style="font-size:11px;color:var(--g);font-weight:700;margin-left:auto">In Stock ✓</span>'}
       </div>
     </div>
     <div class="qty-row">
@@ -1482,11 +1474,6 @@ function openPD(pid){
       <i class="fas fa-truck"></i>
       <div><strong>Free Delivery</strong> on orders above ₹500 | Est. 3-5 days</div>
     </div>
-    <div class="offers-sec">
-      <div style="font-size:13px;font-weight:800;margin-bottom:7px;font-family:'Exo 2',sans-serif">Available Offers</div>
-      <div class="offer-tag"><i class="fas fa-tag"></i><div><strong>Bank Offer:</strong> 10% off on first order. Use code <strong>PRINCE10</strong></div></div>
-      <div class="offer-tag"><i class="fas fa-gift"></i><div><strong>Buy 2+:</strong> Get extra 5% off on LED bulbs</div></div>
-    </div>
     <div class="pdspecs">
       <div class="sphd">Specifications</div>
       ${p.wattage?`<div class="spr"><span class="spk">Wattage</span><span class="spv">${p.wattage}</span></div>`:''}
@@ -1498,11 +1485,7 @@ function openPD(pid){
       <div class="sphd">Description</div>
       <p style="font-size:13px;color:var(--t2);line-height:1.6">${p.description||'High quality LED product from Prince Enterprise.'}</p>
     </div>
-    <div class="pdrevs">
-      <div class="sphd">Customer Reviews</div>
-      ${[...Array(3)].map((_,i)=>revCard(i)).join('')}
-    </div>
-    <div id="pdExtraActs" style="display:flex;gap:8px;padding:8px 12px;background:var(--c);border-top:1px solid var(--b)">
+    <div id="pdExtraActs" style="display:flex;gap:8px;padding:8px 12px;background:var(--c);border-top:1px solid var(--b);margin-top:8px">
       <button onclick="addToCompare('${pid}');showToast('Added to compare')" style="flex:1;padding:9px;background:var(--pl);color:var(--p);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-code-compare"></i> Compare</button>
       <button onclick="setPriceAlert('${pid}')" style="flex:1;padding:9px;background:#fff8e1;color:#e65100;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-bell"></i> Alert</button>
       <button onclick="shareProductSheet('${pid}')" style="flex:1;padding:9px;background:#e8f5e9;color:#2e7d32;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-share-alt"></i> Share</button>
@@ -1523,22 +1506,6 @@ function openPD(pid){
       mainImg.onclick = ()=>openZoom(mainImg.src);
     }
   }, 50);
-}
-
-function revCard(i){
-  const names=['Rohit S.','Priya M.','Arun K.'];
-  const txts=['Excellent quality! Bright and energy efficient. Highly recommend.','Great product, fast delivery. Will buy again.','Good value for money. Lights look great in my living room.'];
-  const rats=[5,4,4.5];
-  const dates=['2d ago','1w ago','2w ago'];
-  return `<div class="rev">
-    <div class="rev-top">
-      <div class="rev-av">${names[i][0]}</div>
-      <span class="rev-name">${names[i]}</span>
-      <span class="ratb" style="font-size:10px"><i class="fas fa-star"></i> ${rats[i]}</span>
-      <span class="rev-date">${dates[i]}</span>
-    </div>
-    <p class="rev-body">${txts[i]}</p>
-  </div>`;
 }
 
 function changePDImg(el,src){
@@ -1633,8 +1600,8 @@ function cartQty(pid,d){
 
 function applyCoupon(){
   const code=document.getElementById('couponIn').value.trim().toUpperCase();
-  const c=coupons.find(x=>x.code===code)||{code:'PRINCE10',discount:10,type:'percent'};
-  if(code===c.code){showToast(`Coupon applied! ${c.discount}${c.type==='percent'?'%':'₹'} off`);}
+  const c=coupons.find(x=>x.code===code);
+  if(c){showToast(`Coupon applied! ${c.discount}${c.type==='percent'?'%':'₹'} off`);}
   else showToast('Invalid coupon code');
 }
 
@@ -1820,7 +1787,6 @@ function navTo(pg){
   if(ni)ni.classList.add('on');
   document.getElementById('sugBox').classList.add('hidden');
   
-  // Inject profile extras dynamically
   if(pg==='profile') setTimeout(addProfileExtras, 50);
 }
 
@@ -1926,7 +1892,8 @@ function editProfile(){
         <div style="padding:16px">
           <div style="text-align:center;margin-bottom:18px">
             <div onclick="openAvatarModal()" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pd));display:flex;align-items:center;justify-content:center;margin:0 auto;cursor:pointer;position:relative;font-size:28px;font-weight:800;color:#fff;font-family:'Exo 2',sans-serif" id="editAvatar">
-              ${(name[0]||'U').toUpperCase()}
+              <span id="editAvatarTxt">${(name[0]||'U').toUpperCase()}</span>
+              <img id="editAvatarImg" src="${document.getElementById('profAvImg')?.src||''}" style="position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;display:${document.getElementById('profAvImg')?.style.display||'none'}">
               <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--p)"><i class="fas fa-camera" style="font-size:9px;color:var(--p)"></i></div>
             </div>
             <p style="font-size:11px;color:var(--m);margin-top:6px">Tap to change photo</p>
@@ -1974,7 +1941,11 @@ async function saveProfile(){
   try{
     await db.ref('users/'+currentUser.uid).update({name, phone, address:addr, updatedAt:Date.now()});
     await currentUser.updateProfile({displayName:name});
-    ['profAv','profAvTxt'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=(name[0]||'U').toUpperCase();});
+    
+    // Safely update avatar letter without removing the underlying img element
+    const avTxt = document.getElementById('profAvTxt'); 
+    if (avTxt) avTxt.textContent = (name[0]||'U').toUpperCase();
+    
     const pn=document.getElementById('profName'); if(pn) pn.textContent=name;
     const sheet=document.getElementById('editProfileSheet');
     if(sheet) sheet.remove();
@@ -1990,12 +1961,16 @@ function openAddressBook(){ openAddrModal(); }
 
 function showCoupons(){
   let html='<div style="padding:14px">';
-  const list=[...coupons,{code:'PRINCE10',discount:10,type:'percent',desc:'10% off first order'},{code:'LED20',discount:20,type:'percent',desc:'20% off LED strips'}];
-  html+=list.map(c=>`<div style="background:var(--bg);border:1.5px dashed var(--b);border-radius:var(--rd);padding:12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
-    <div><div style="font-size:15px;font-weight:800;font-family:'Exo 2',sans-serif;color:var(--p)">${c.code}</div>
-    <div style="font-size:12px;color:var(--m)">${c.desc||`${c.discount}${c.type==='percent'?'%':'₹'} off`}</div></div>
-    <button class="btn" style="background:var(--p);color:#fff;padding:6px 12px;font-size:12px" onclick="copyCode('${c.code}')">Copy</button>
-  </div>`).join('');
+  const list=[...coupons];
+  if(list.length === 0){
+    html += `<div style="text-align:center;padding:20px;color:var(--m)">No coupons available right now.</div>`;
+  } else {
+    html+=list.map(c=>`<div style="background:var(--bg);border:1.5px dashed var(--b);border-radius:var(--rd);padding:12px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:15px;font-weight:800;font-family:'Exo 2',sans-serif;color:var(--p)">${c.code}</div>
+      <div style="font-size:12px;color:var(--m)">${c.desc||`${c.discount}${c.type==='percent'?'%':'₹'} off`}</div></div>
+      <button class="btn" style="background:var(--p);color:#fff;padding:6px 12px;font-size:12px" onclick="copyCode('${c.code}')">Copy</button>
+    </div>`).join('');
+  }
   html+='</div>';
   showSheet('My Coupons',html);
 }
@@ -2049,14 +2024,20 @@ document.addEventListener('click',e=>{
   document.addEventListener('touchend',e=>{
     const dx=tx-ts, dy=e.changedTouches[0].clientY-ty;
     const absX=Math.abs(dx), absY=Math.abs(dy);
-    if(absX>60 && absX>absY*1.5){
+    
+    // Decreased tab switching sensitivity - horizontal swipe requires much larger pull
+    if(absX>120 && absX>absY*3){
       const active=document.querySelector('.pview.show');
+      // Ensure we aren't swiping on a product carousel or similar inside element
+      if(e.target.closest('.pscr, .pdthumbs, .rv-strip')) return;
       const pg=active?active.id.replace('pg','').toLowerCase():'';
       const idx=pages.indexOf(pg);
       if(dx<0 && idx<pages.length-1) navTo(pages[idx+1]); 
       if(dx>0 && idx>0)              navTo(pages[idx-1]);  
     }
-    if(dy>80 && absX<40){
+    
+    // Bottom Sheet swipe down handler
+    if(dy>100 && absX<40){
       if(!document.getElementById('invoiceModal').classList.contains('hidden')) closeInvoice();
       if(!document.getElementById('addrModal').classList.contains('hidden')) closeAddrModal();
       if(!document.getElementById('addAddrModal').classList.contains('hidden')) closeAddAddr();
@@ -2064,25 +2045,6 @@ document.addEventListener('click',e=>{
       if(!document.getElementById('payModal').classList.contains('hidden')) closePayModal();
     }
   },{passive:true});
-
-  ['pdPanel','cartPanel'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el)return;
-    let start=0,dragging=false;
-    el.addEventListener('touchstart',e=>{start=e.touches[0].clientX;dragging=false;},{passive:true});
-    el.addEventListener('touchmove',e=>{
-      const dx=start-e.touches[0].clientX;
-      if(dx<-30){dragging=true;el.style.transform='translateX('+Math.abs(dx)+'px)';}
-    },{passive:true});
-    el.addEventListener('touchend',e=>{
-      if(dragging && start-e.changedTouches[0].clientX < -80){
-        el.style.transform='';
-        if(id==='pdPanel') closePD();
-        if(id==='cartPanel') closeCart();
-      } else { el.style.transform=''; }
-      dragging=false;
-    },{passive:true});
-  });
 })();
 
 // ============================================================
