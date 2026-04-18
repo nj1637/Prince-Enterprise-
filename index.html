@@ -41,7 +41,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
 input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .hidden{display:none!important}.gone{opacity:0;pointer-events:none}
 
-/* Modals & Overlays Stacking Fixes */
+/* Modals & Overlays - Removed blur to stop visual glitching */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:850;transition:var(--tr)}
 
 /* === SPLASH === */
@@ -213,7 +213,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 #pdPanel{position:fixed;inset:0;z-index:800;background:var(--bg);overflow-y:auto;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 #pdPanel.show{transform:translateX(0)}
 .pdhdr{position:sticky;top:0;z-index:10;background:var(--p);padding:10px;display:flex;align-items:center;gap:7px}
-.bakbtn{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0;transition:var(--tr)}
+.bakbtn{width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0;transition:var(--tr);font-size:16px;}
 .bakbtn:hover{background:rgba(255,255,255,.25)}
 .pdsb{flex:1;background:#fff;border-radius:6px;padding:7px 11px;font-size:12px;color:var(--m);cursor:pointer}
 .pdact{width:34px;height:34px;background:rgba(255,255,255,.15);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:var(--tr)}
@@ -369,7 +369,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .chips::-webkit-scrollbar{display:none}
 .loader{width:20px;height:20px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.page-empty{padding:60px 20px;text-align:center;color:var(--m)}
+.page-empty{padding:60px 20px;text-align:center;color:var(--m);grid-column: 1 / -1;}
 .page-empty i{font-size:52px;opacity:.25;margin-bottom:14px}
 .page-empty h3{font-size:15px;font-weight:700;margin-bottom:5px}
 .page-empty p{font-size:12.5px}
@@ -693,6 +693,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
         <div class="pmi" onclick="showTrack()"><div class="pmi-ico" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-truck"></i></div><span class="pmi-lbl">Track Your Order</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="doLogout()"><div class="pmi-ico" style="background:#ffebee;color:#c62828"><i class="fas fa-sign-out-alt"></i></div><span class="pmi-lbl">Logout</span><i class="fas fa-chevron-right pmi-arr"></i></div>
       </div>
+      <div style="height:16px"></div>
     </div>
 
     <!-- NOTIFICATIONS PAGE -->
@@ -1001,6 +1002,8 @@ let banIdx       = 0;
 let flashTimer   = null;
 let checkoutTotal= 0;
 let banLen       = 5;
+let recentlyViewed = JSON.parse(localStorage.getItem('pe_rv')||'[]');
+let userAddresses=[], selectedAddrId=null, _addrType='Home';
 
 // ============================================================
 //  SPLASH → AUTH
@@ -1221,6 +1224,8 @@ async function loadAppData(){
   if(profAvTxt) profAvTxt.textContent = (name[0]||'U').toUpperCase();
   if(profName) profName.textContent = name;
   if(profEmail) profEmail.textContent = email;
+  // Also update header brand if needed
+  console.log('Profile loaded:', name, email);
 
   // App Settings
   const setSnap=await db.ref('appSettings').get();
@@ -1231,8 +1236,7 @@ async function loadAppData(){
   if(pSnap.val()){
     allProducts=Object.entries(pSnap.val()).map(([id,p])=>({id,...p}));
   } else {
-    allProducts=defaultProducts();
-    allProducts.forEach(p=>db.ref('products/'+p.id).set(p));
+    allProducts=[]; 
   }
 
   // Cart & Wishlist
@@ -1251,7 +1255,7 @@ async function loadAppData(){
 
   // Notifications
   const nSnap=await db.ref('notifications/'+currentUser.uid).get();
-  notifications=nSnap.val()?Object.values(nSnap.val()).reverse():defaultNotifs();
+  notifications=nSnap.val()?Object.values(nSnap.val()).reverse():[];
 
   renderAll();
   initBanner();
@@ -1259,25 +1263,8 @@ async function loadAppData(){
 }
 
 // ============================================================
-//  DEFAULT DATA
+//  STRUCTURAL CATEGORIES
 // ============================================================
-function defaultProducts(){
-  return [
-    {id:'p1',name:'Prince 9W LED Bulb Warm White',category:'Bulbs',price:79,originalPrice:149,discount:47,rating:4.5,reviews:128,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:50,isNew:true,isBestSeller:true,description:'Energy efficient 9W LED bulb with warm white light. 270° beam angle. Lasts 25,000 hours.',wattage:'9W',voltage:'220-240V',color:'Warm White 3000K',warranty:'2 Years'},
-    {id:'p2',name:'RGB LED Strip 5M with Remote',category:'Strip Lights',price:399,originalPrice:799,discount:50,rating:4.3,reviews:89,image:'https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=400',stock:30,isNew:true,isFlashDeal:true,description:'5 meter RGB LED strip with 44-key remote. Waterproof IP65. Self-adhesive backing.',wattage:'24W',voltage:'12V DC',color:'RGB Multicolor',warranty:'1 Year'},
-    {id:'p3',name:'Prince LED Panel Light 12W',category:'Panel Lights',price:299,originalPrice:550,discount:46,rating:4.6,reviews:214,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:45,isBestSeller:true,isFlashDeal:true,description:'Square panel light 12W ultra slim. Flicker-free. Perfect for office and home ceilings.',wattage:'12W',voltage:'220V',color:'Day White 6500K',warranty:'3 Years'},
-    {id:'p4',name:'LED Street Light 30W Outdoor',category:'Outdoor',price:899,originalPrice:1599,discount:44,rating:4.4,reviews:67,image:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400',stock:20,description:'Heavy duty 30W outdoor street light. IP66 waterproof. Wide beam 120°.',wattage:'30W',voltage:'220V',color:'Cool White 6500K',warranty:'2 Years'},
-    {id:'p5',name:'Smart WiFi LED Bulb 9W RGB',category:'Smart Lights',price:549,originalPrice:999,discount:45,rating:4.7,reviews:156,image:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400',stock:35,isNew:true,isBestSeller:true,description:'Works with Google Home & Alexa. 16 million colors. Voice &amp; app controlled.',wattage:'9W',voltage:'220V',color:'RGB + Warm White',warranty:'1 Year'},
-    {id:'p6',name:'LED Tube Light 18W 4ft',category:'Tube Lights',price:199,originalPrice:350,discount:43,rating:4.2,reviews:98,image:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',stock:60,isBestSeller:true,description:'T8 LED tube light 18W replacing 40W fluorescent. Instant start. No flicker.',wattage:'18W',voltage:'220V',color:'Cool White',warranty:'2 Years'},
-    {id:'p7',name:'LED Downlight 7W Recessed',category:'Downlights',price:149,originalPrice:280,discount:47,rating:4.4,reviews:175,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:80,isFlashDeal:true,description:'7W recessed LED downlight. Cut-out 75mm. Sleek design for modern interiors.',wattage:'7W',voltage:'220V',color:'Neutral White 4000K',warranty:'2 Years'},
-    {id:'p8',name:'Solar LED Garden Light',category:'Outdoor',price:499,originalPrice:899,discount:44,rating:4.1,reviews:44,image:'https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=400',stock:25,isNew:true,description:'Solar powered garden stake light. Auto on/off. Weatherproof.',wattage:'2W Solar',voltage:'Solar',color:'Warm White',warranty:'1 Year'},
-    {id:'p9',name:'LED Flood Light 50W',category:'Outdoor',price:699,originalPrice:1200,discount:42,rating:4.5,reviews:88,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:15,isBestSeller:true,description:'50W LED flood light for stadium, parking, warehouse. IP66 rated.',wattage:'50W',voltage:'220V',color:'Day Light',warranty:'2 Years'},
-    {id:'p10',name:'Neon Flex LED Strip 1M',category:'Decorative',price:299,originalPrice:499,discount:40,rating:4.3,reviews:62,image:'https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=400',stock:40,isNew:true,isFlashDeal:true,description:'Neon flex LED 1 meter. Bendable 360°. Perfect for signage and decor.',wattage:'10W',voltage:'12V',color:'Multiple Colors',warranty:'1 Year'},
-    {id:'p11',name:'LED Emergency Bulb 9W',category:'Bulbs',price:249,originalPrice:420,discount:41,rating:4.6,reviews:133,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:55,description:'Built-in battery. Works during power cuts for 4+ hours. B22 base.',wattage:'9W',voltage:'220V',color:'Warm White',warranty:'1 Year'},
-    {id:'p12',name:'LED Chandelier 24W 5-Blade',category:'Decorative',price:1299,originalPrice:2499,discount:48,rating:4.8,reviews:29,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:10,isNew:true,description:'Modern LED chandelier. 5-blade fan-style. Remote included. Dimmable.',wattage:'24W',voltage:'220V',color:'RGB + Cool White',warranty:'2 Years'},
-  ];
-}
-
 const categories=[
   {name:'Bulbs',icon:'💡',color:'#fff8e1',iconColor:'#f57f17'},
   {name:'Strip Lights',icon:'🌈',color:'#f3e5f5',iconColor:'#7b1fa2'},
@@ -1286,16 +1273,8 @@ const categories=[
   {name:'Smart Lights',icon:'📡',color:'#e8eaf6',iconColor:'#3949ab'},
   {name:'Tube Lights',icon:'🔦',color:'#fce4ec',iconColor:'#c2185b'},
   {name:'Downlights',icon:'🔆',color:'#fff3e0',iconColor:'#e65100'},
-  {name:'Decorative',icon:'✨',color:'#fbe9e7',iconColor:'#bf360c'},
+  {name:'Decorative',icon:'✨',color:'#fbe9e7',iconColor:'#bf360c'}
 ];
-
-function defaultNotifs(){
-  return [
-    {id:'n1',title:'Welcome to Prince Enterprise!',desc:'Get 10% off your first order with code PRINCE10',time:'Just now',icon:'🎉',iconBg:'#e8f5e9',iconColor:'#2e7d32',unread:true},
-    {id:'n2',title:'Flash Sale Alert 🔥',desc:'Up to 60% off on LED products. Offer ends tonight!',time:'1h ago',icon:'⚡',iconBg:'#fff8e1',iconColor:'#f57f17',unread:true},
-    {id:'n3',title:'New Smart Lights Arrived',desc:'Check out our latest WiFi-enabled smart bulbs',time:'2d ago',icon:'💡',iconBg:'#e3f2fd',iconColor:'#1565c0',unread:false},
-  ];
-}
 
 // ============================================================
 //  RENDER
@@ -1310,6 +1289,7 @@ function renderAll(){
   renderWishlist();
   renderOrders();
   renderNotifs();
+  renderRecentlyViewed();
   updateBadges();
 }
 
@@ -1352,13 +1332,12 @@ function renderAllProducts(filtered=null){
   const chips=document.getElementById('filterChips');
   const active=filtered?'all':null;
   chips.innerHTML=`<span class="chip ${!filtered?'on':''}" onclick="renderAllProducts()">All</span>`+
-    categories.map(c=>`<span class="chip" onclick="filterCat('${c.name}')">${c.name}</span>`).join('');
+    categories.map(c=>`<span class="chip ${filtered&&filtered[0]&&filtered[0].category===c.name?'on':''}" onclick="filterCat('${c.name}')">${c.name}</span>`).join('');
 }
 function filterCat(cat){
   navTo('products');
   const filtered=allProducts.filter(p=>p.category===cat);
   renderAllProducts(filtered);
-  document.querySelectorAll('#filterChips .chip').forEach(c=>c.classList.toggle('on',c.textContent===cat));
 }
 
 function pcCard(p,cls){
@@ -1390,6 +1369,8 @@ function openPD(pid){
   const p=allProducts.find(x=>x.id===pid);
   if(!p)return;
   currentPD=p;pdQty=1;
+  trackView(pid);
+
   const wl=wishlist.some(w=>w.id===p.id);
   document.getElementById('pdWishBtn').innerHTML=`<i class="${wl?'fas':'far'} fa-heart"></i>`;
   document.getElementById('pdContent').innerHTML=`
@@ -1397,7 +1378,6 @@ function openPD(pid){
       <img class="pdmain" id="pdMainImg" src="${p.image}" alt="${p.name}" onerror="this.src='https://via.placeholder.com/400x300/f0f0f0/888?text=LED'">
       <div class="pdthumbs">
         <img class="pdth on" src="${p.image}" onclick="changePDImg(this,'${p.image}')">
-        <img class="pdth" src="${p.image}?blur=20" onclick="changePDImg(this,'${p.image}?blur=20')">
       </div>
     </div>
     <div class="pdcard">
@@ -1425,12 +1405,6 @@ function openPD(pid){
       <i class="fas fa-truck"></i>
       <div><strong>Free Delivery</strong> on orders above ₹500 | Est. 3-5 days</div>
     </div>
-    <div class="offers-sec">
-      <div style="font-size:13px;font-weight:800;margin-bottom:7px;font-family:'Exo 2',sans-serif">Available Offers</div>
-      <div class="offer-tag"><i class="fas fa-tag"></i><div><strong>Bank Offer:</strong> 10% off on first order. Use code <strong>PRINCE10</strong></div></div>
-      <div class="offer-tag"><i class="fas fa-gift"></i><div><strong>Buy 2+:</strong> Get extra 5% off on LED bulbs</div></div>
-      <div class="offer-tag"><i class="fas fa-shipping-fast"></i><div><strong>Free Installation</strong> on orders above ₹2000 (local area)</div></div>
-    </div>
     <div class="pdspecs">
       <div class="sphd">Specifications</div>
       ${p.wattage?`<div class="spr"><span class="spk">Wattage</span><span class="spv">${p.wattage}</span></div>`:''}
@@ -1439,35 +1413,33 @@ function openPD(pid){
       ${p.warranty?`<div class="spr"><span class="spk">Warranty</span><span class="spv">${p.warranty}</span></div>`:''}
       <div class="spr"><span class="spk">Category</span><span class="spv">${p.category}</span></div>
       <div class="spr"><span class="spk">Brand</span><span class="spv">Prince Enterprise</span></div>
-      <div class="spr"><span class="spk">SKU</span><span class="spv">PE-${p.id.toUpperCase()}</span></div>
     </div>
     <div class="pdcard" style="margin-top:8px">
       <div class="sphd">Description</div>
       <p style="font-size:13px;color:var(--t2);line-height:1.6">${p.description||'High quality LED product from Prince Enterprise.'}</p>
     </div>
-    <div class="pdrevs">
-      <div class="sphd">Customer Reviews</div>
-      ${[...Array(3)].map((_,i)=>revCard(i)).join('')}
+    <div id="pdExtraActs" style="display:flex;gap:8px;padding:8px 12px;background:var(--c);border-top:1px solid var(--b);margin-top:8px">
+      <button onclick="addToCompare('${pid}');showToast('Added to compare')" style="flex:1;padding:9px;background:var(--pl);color:var(--p);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-code-compare"></i> Compare</button>
+      <button onclick="setPriceAlert('${pid}')" style="flex:1;padding:9px;background:#fff8e1;color:#e65100;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-bell"></i> Alert</button>
+      <button onclick="shareProductSheet('${pid}')" style="flex:1;padding:9px;background:#e8f5e9;color:#2e7d32;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-share-alt"></i> Share</button>
+    </div>
+    <div style="height:80px"></div>
+    <div class="pdsticky">
+      <div class="pdcart" onclick="addToCart('${p.id}')">Add to Cart</div>
+      <div class="pdbuy" onclick="addToCart('${p.id}'); openCart()">Buy Now</div>
     </div>
   `;
+  
   document.getElementById('pdPanel').classList.add('show');
   document.getElementById('main').scrollTop=0;
-}
 
-function revCard(i){
-  const names=['Rohit S.','Priya M.','Arun K.'];
-  const txts=['Excellent quality! Bright and energy efficient. Highly recommend.','Great product, fast delivery. Will buy again.','Good value for money. Lights look great in my living room.'];
-  const rats=[5,4,4.5];
-  const dates=['2d ago','1w ago','2w ago'];
-  return `<div class="rev">
-    <div class="rev-top">
-      <div class="rev-av">${names[i][0]}</div>
-      <span class="rev-name">${names[i]}</span>
-      <span class="ratb" style="font-size:10px"><i class="fas fa-star"></i> ${rats[i]}</span>
-      <span class="rev-date">${dates[i]}</span>
-    </div>
-    <p class="rev-body">${txts[i]}</p>
-  </div>`;
+  setTimeout(() => {
+    const mainImg = document.getElementById('pdMainImg');
+    if(mainImg && p){
+      mainImg.style.cursor = 'zoom-in';
+      mainImg.onclick = ()=>openZoom(mainImg.src);
+    }
+  }, 50);
 }
 
 function changePDImg(el,src){
@@ -1562,8 +1534,8 @@ function cartQty(pid,d){
 
 function applyCoupon(){
   const code=document.getElementById('couponIn').value.trim().toUpperCase();
-  const c=coupons.find(x=>x.code===code)||{code:'PRINCE10',discount:10,type:'percent'};
-  if(code===c.code){showToast(`Coupon applied! ${c.discount}${c.type==='percent'?'%':'₹'} off`);}
+  const c=coupons.find(x=>x.code===code);
+  if(c){showToast(`Coupon applied! ${c.discount}${c.type==='percent'?'%':'₹'} off`);}
   else showToast('Invalid coupon code');
 }
 
@@ -1579,11 +1551,13 @@ function startCheckout(){
   document.getElementById('pmTotal').textContent=total;
   document.getElementById('codSub').textContent='₹'+subtotal;
   document.getElementById('codTotal').textContent='₹'+total;
+  
   const upi=appSettings.upiId||'princeenterprise@upi';
   document.getElementById('upiIdText').textContent=upi;
   document.getElementById('upiIdShow').textContent=upi;
   document.getElementById('qrCodeDiv').innerHTML='';
   new QRCode(document.getElementById('qrCodeDiv'),{text:`upi://pay?pa=${upi}&pn=Prince+Enterprise&am=${total}&cu=INR`,width:160,height:160});
+  
   const selA=userAddresses.find(a=>a.id===selectedAddrId)||userAddresses[0];
   if(selA){
     const full=[selA.line1,selA.line2,selA.city,selA.state,selA.pin].filter(Boolean).join(', ');
@@ -1687,7 +1661,7 @@ function renderOrders(){
         <div class="oa-btn oa-p" onclick="showOrderTrack('${o.orderId}')"><i class="fas fa-map-marker-alt"></i> Track</div>
         <div class="oa-btn oa-p" onclick="openInvoice('${o.orderId||o.id}')"><i class="fas fa-file-invoice"></i> Invoice</div>
         <div class="oa-btn oa-p" onclick="contactWA('Order ${o.orderId}')"><i class="fab fa-whatsapp"></i> Support</div>
-        ${o.status==='Delivered'?`<div class="oa-btn oa-r" onclick="showToast('Return request submitted')"><i class="fas fa-undo"></i> Return</div>`:''}
+        ${o.status==='Delivered'?`<div class="oa-btn oa-r" onclick="openCancelOrder('${o.orderId}')"><i class="fas fa-undo"></i> Return</div>`:''}
       </div>
     </div>
   `).join('');
@@ -1748,7 +1722,6 @@ function navTo(pg){
   const ni=document.getElementById('ni-'+pg);
   if(ni)ni.classList.add('on');
   document.getElementById('sugBox').classList.add('hidden');
-  
   if(pg==='profile') setTimeout(addProfileExtras, 50);
 }
 
@@ -1828,6 +1801,7 @@ function contactWA(msg=''){
   const txt=encodeURIComponent(msg||'Hi! I need help with Prince Enterprise products.');
   window.open('https://wa.me/919876543210?text='+txt,'_blank');
 }
+
 function editProfile(){
   if(!currentUser){ showToast('Please login first'); return; }
   db.ref('users/'+currentUser.uid).get().then(snap=>{
@@ -1836,8 +1810,10 @@ function editProfile(){
     const email = u.email || currentUser.email || '';
     const phone = u.phone || '';
     const addr = u.address || '';
+    
     const existing = document.getElementById('editProfileSheet');
     if(existing) existing.remove();
+    
     const sheet = document.createElement('div');
     sheet.id = 'editProfileSheet';
     sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
@@ -1853,9 +1829,9 @@ function editProfile(){
         </div>
         <div style="padding:16px">
           <div style="text-align:center;margin-bottom:18px">
-            <div onclick="openAvatarModal()" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pd));display:flex;align-items:center;justify-content:center;margin:0 auto;cursor:pointer;position:relative;font-size:28px;font-weight:800;color:#fff;font-family:'Exo 2',sans-serif" id="editAvatar">
-              <span id="editAvatarTxt">${(name[0]||'U').toUpperCase()}</span>
-              <img id="editAvatarImg" src="${document.getElementById('profAvImg')?.src||''}" style="position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;display:${document.getElementById('profAvImg')?.style.display||'none'}">
+            <div onclick="openAvatarModal()" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pd));display:flex;align-items:center;justify-content:center;margin:0 auto;cursor:pointer;position:relative;font-size:28px;font-weight:800;color:#fff;font-family:'Exo 2',sans-serif">
+              <span>${(name[0]||'U').toUpperCase()}</span>
+              <img src="${document.getElementById('profAvImg')?.src||''}" style="position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;display:${document.getElementById('profAvImg')?.style.display||'none'}">
               <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--p)"><i class="fas fa-camera" style="font-size:9px;color:var(--p)"></i></div>
             </div>
             <p style="font-size:11px;color:var(--m);margin-top:6px">Tap to change photo</p>
@@ -1904,7 +1880,6 @@ async function saveProfile(){
     await db.ref('users/'+currentUser.uid).update({name, phone, address:addr, updatedAt:Date.now()});
     await currentUser.updateProfile({displayName:name});
     
-    // Safely update avatar letter without removing the underlying img element
     const avTxt = document.getElementById('profAvTxt'); 
     if (avTxt) avTxt.textContent = (name[0]||'U').toUpperCase();
     
@@ -1967,6 +1942,35 @@ function doLogout(){
 document.addEventListener('click',e=>{
   if(!e.target.closest('.hbar'))document.getElementById('sugBox').classList.add('hidden');
 });
+
+// ============================================================
+//  SWIPE GESTURES
+// ============================================================
+(function initSwipeGestures(){
+  let ts=0,tx=0,ty=0;
+
+  document.addEventListener('touchstart',e=>{
+    ts=e.touches[0].clientX;
+    tx=e.touches[0].clientX;
+    ty=e.touches[0].clientY;
+  },{passive:true});
+
+  document.addEventListener('touchmove',e=>{tx=e.touches[0].clientX;},{passive:true});
+
+  document.addEventListener('touchend',e=>{
+    const dx=tx-ts, dy=e.changedTouches[0].clientY-ty;
+    const absX=Math.abs(dx), absY=Math.abs(dy);
+    
+    // Bottom Sheet swipe down handler ONLY (disabled horizontal swipes for tabs to prevent accidental shifts)
+    if(dy>100 && absX<40){
+      if(!document.getElementById('invoiceModal').classList.contains('hidden')) closeInvoice();
+      if(!document.getElementById('addrModal').classList.contains('hidden')) closeAddrModal();
+      if(!document.getElementById('addAddrModal').classList.contains('hidden')) closeAddAddr();
+      if(!document.getElementById('avatarModal').classList.contains('hidden')) closeAvatarModal();
+      if(!document.getElementById('payModal').classList.contains('hidden')) closePayModal();
+    }
+  },{passive:true});
+})();
 
 // ============================================================
 //  MULTI-ADDRESS SYSTEM
@@ -2200,9 +2204,6 @@ async function enableNotifs(){
   if(perm==='granted'){
     showToast('Notifications enabled! ✅');
     await db.ref('users/'+currentUser.uid+'/notifEnabled').set(true);
-    setTimeout(()=>{
-      new Notification('Welcome to Prince Enterprise! 💡',{body:'Flash Sale: Up to 60% off LED lights today!',icon:'/favicon.ico'});
-    },1000);
   } else {
     showToast('You can enable notifications from browser settings');
   }
@@ -2542,6 +2543,7 @@ function shareRefCode(){
 }
 
 // ── Add new items to Profile menu ────────────────────────────────
+// Hook into existing profile render by adding rows dynamically after load
 function addProfileExtras(){
   const pmenu = document.querySelector('#pgProfile .pmenu:last-of-type');
   if(!pmenu || document.getElementById('extraMenuItems')) return;
@@ -2562,10 +2564,12 @@ const _origOpenPD = openPD;
 openPD = function(pid){
   _origOpenPD(pid);
   trackView(pid);
+  // Add compare & share & zoom buttons after render
   setTimeout(()=>{
     const pdSticky = document.querySelector('#pdPanel .pdsticky');
     const p = allProducts.find(x=>x.id===pid);
     if(pdSticky && p){
+      // Add extra action row
       let extras = document.getElementById('pdExtraActs');
       if(!extras){
         extras = document.createElement('div');
@@ -2579,6 +2583,7 @@ openPD = function(pid){
         pdSticky.parentNode.insertBefore(extras, pdSticky);
       }
     }
+    // Make main image zoomable
     const mainImg = document.getElementById('pdMainImg');
     if(mainImg && p){
       mainImg.style.cursor = 'zoom-in';
