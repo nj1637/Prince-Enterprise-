@@ -41,7 +41,7 @@ button{cursor:pointer;border:none;background:none;font-family:inherit}
 input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .hidden{display:none!important}.gone{opacity:0;pointer-events:none}
 
-/* Adjusted overlay: no blur, purely semi-transparent for compatibility */
+/* Modals & Overlays Stacking Fixes */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:850;transition:var(--tr)}
 
 /* === SPLASH === */
@@ -307,7 +307,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 
 /* === PAYMENT MODAL === */
 #payModal{position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end;justify-content:center}
-#payModal .pm-sheet{background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:0 0 20px;animation:sheetUp .35s cubic-bezier(.4,0,.2,1) both;box-shadow:0 -8px 40px rgba(0,0,0,.25)}
+.pm-sheet{background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:0 0 20px;animation:sheetUp .35s cubic-bezier(.4,0,.2,1) both;box-shadow:0 -8px 40px rgba(0,0,0,.25); position:relative; z-index:900;}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 .pm-hdr{padding:16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5}
 .pm-drag{width:40px;height:4px;background:var(--b);border-radius:2px;margin:0 auto 12px}
@@ -340,67 +340,9 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .place-order-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--s),#e55000);color:#fff;border-radius:var(--rd);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 18px rgba(251,100,27,.35);transition:var(--sp)}
 .place-order-btn:hover{transform:scale(1.01);box-shadow:0 6px 22px rgba(251,100,27,.45)}
 
-/* === WISHLIST === */
-.wlgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
-
-/* === PROFILE / ACCOUNT === */
-.prof-hdr{background:linear-gradient(135deg,var(--p),var(--pd));padding:24px 16px 16px;display:flex;align-items:center;gap:12px}
-.prof-av{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:800;border:2px solid rgba(255,255,255,.35);flex-shrink:0;font-family:'Exo 2',sans-serif}
-.prof-name{color:#fff}
-.prof-name h3{font-family:'Exo 2',sans-serif;font-size:17px;font-weight:800}
-.prof-name p{font-size:12px;opacity:.8}
-.prof-edit{margin-left:auto;width:34px;height:34px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;transition:var(--tr)}
-.prof-edit:hover{background:rgba(255,255,255,.3)}
-.pmenu{background:var(--c);margin:10px;border-radius:var(--rd);overflow:hidden;box-shadow:var(--sh)}
-.pmenu-sec{padding:4px 0}
-.pmenu-hd{padding:8px 14px;font-size:11px;font-weight:800;color:var(--m);text-transform:uppercase;letter-spacing:.5px;background:var(--bg)}
-.pmi{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;border-bottom:1px solid var(--d);transition:var(--tr)}
-.pmi:last-child{border-bottom:none}
-.pmi:hover{background:var(--bg)}
-.pmi-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.pmi-lbl{flex:1;font-size:13.5px;font-weight:600}
-.pmi-arr{color:var(--m);font-size:13px}
-.dark-row{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--d)}
-.dark-row label{font-size:13.5px;font-weight:600}
-.tog{width:44px;height:24px;background:var(--b);border-radius:12px;cursor:pointer;position:relative;transition:var(--tr)}
-.tog::after{content:'';width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:2px;left:2px;transition:var(--tr);box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.tog.on{background:var(--p)}
-.tog.on::after{transform:translateX(20px)}
-
-/* === NOTIFICATIONS === */
-.notif{background:var(--c);border-radius:var(--rd);margin:10px 10px 0;padding:12px 13px;box-shadow:var(--sh);display:flex;gap:10px;cursor:pointer;transition:var(--tr)}
-.notif:hover{background:var(--bg)}
-.notif.unread{border-left:3px solid var(--p)}
-.notif-ico{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-.notif-body{flex:1;min-width:0}
-.notif-t{font-size:13px;font-weight:700;margin-bottom:2px}
-.notif-d{font-size:11.5px;color:var(--m);line-height:1.4}
-.notif-time{font-size:10.5px;color:var(--m);white-space:nowrap;margin-left:6px;flex-shrink:0}
-
-/* === ORDER HISTORY === */
-.ord-card{background:var(--c);border-radius:var(--rd);margin:10px 10px 0;padding:12px;box-shadow:var(--sh)}
-.ord-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--d)}
-.ord-id{font-size:12px;color:var(--m)}
-.ord-st{font-size:12px;font-weight:700;padding:2px 8px;border-radius:10px}
-.st-delivered{background:#e8f5e9;color:#2e7d32}
-.st-shipping{background:#e3f2fd;color:#1565c0}
-.st-processing{background:#fff8e1;color:#f57f17}
-.st-cancelled{background:#ffebee;color:#c62828}
-.ord-item{display:flex;gap:9px;align-items:center;padding:6px 0}
-.ord-img{width:46px;height:46px;border-radius:6px;object-fit:cover;background:var(--c2)}
-.ord-info{flex:1;min-width:0}
-.ord-name{font-size:12.5px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ord-meta{font-size:11px;color:var(--m)}
-.ord-actions{display:flex;gap:7px;margin-top:9px;padding-top:9px;border-top:1px solid var(--d)}
-.oa-btn{flex:1;padding:7px;border-radius:6px;font-size:12px;font-weight:700;text-align:center;cursor:pointer;transition:var(--tr)}
-.oa-p{background:var(--pl);color:var(--p)}
-.oa-p:hover{background:var(--p);color:#fff}
-.oa-r{background:#fff0f0;color:var(--r)}
-.oa-r:hover{background:var(--r);color:#fff}
-
 /* === SUCCESS MODAL === */
 #successModal{position:fixed;inset:0;z-index:920;display:flex;align-items:center;justify-content:center;padding:20px}
-.suc-card{background:var(--c);border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:sucPop .5s cubic-bezier(.34,1.56,.64,1) both;box-shadow:var(--sh3)}
+.suc-card{background:var(--c);border-radius:20px;padding:32px 24px;text-align:center;max-width:320px;width:100%;animation:sucPop .5s cubic-bezier(.34,1.56,.64,1) both;box-shadow:var(--sh3); position:relative; z-index:900;}
 @keyframes sucPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
 .suc-ico{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#43a047,#2e7d32);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;animation:sucBounce .6s cubic-bezier(.34,1.56,.64,1) .3s both}
 @keyframes sucBounce{from{transform:scale(0) rotate(-20deg)}to{transform:scale(1) rotate(0)}}
@@ -451,6 +393,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .swipe-panel.dragging{transition:none}
 .pull-close-bar{width:44px;height:5px;background:var(--b);border-radius:3px;margin:8px auto 0;cursor:pointer;transition:background .2s}
 .pull-close-bar:hover{background:var(--p)}
+.sheet-inner{transition:transform .3s cubic-bezier(.4,0,.2,1);will-change:transform; position:relative; z-index:900;}
 
 /* === MULTIPLE ADDRESSES === */
 .addr-item{background:var(--bg);border-radius:var(--rd);border:1.5px solid var(--b);padding:13px;margin-bottom:9px;cursor:pointer;transition:var(--tr);position:relative}
@@ -492,17 +435,14 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 @keyframes navSlide{from{width:0;opacity:0}to{opacity:1}}
 .ni.on .nbar{animation:navSlide .25s ease both}
 
-/* === SHEET GESTURES === */
-.sheet-inner{transition:transform .3s cubic-bezier(.4,0,.2,1);will-change:transform}
-
 /* 1. Live Chat Bubble */
 .chat-fab{position:fixed;right:14px;bottom:calc(var(--nh)+68px);z-index:600;width:48px;height:48px;background:linear-gradient(135deg,#7b1fa2,#4a148c);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;box-shadow:0 4px 18px rgba(123,31,162,.4);cursor:pointer;transition:all .3s cubic-bezier(.34,1.56,.64,1);animation:chatBounce 3s ease infinite}
 @keyframes chatBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 .chat-fab:hover{transform:scale(1.12)!important;animation:none}
 
 /* 2. Compare products */
-.compare-bar{position:fixed;bottom:var(--nh);left:0;right:0;z-index:750;background:linear-gradient(135deg,var(--p),var(--pd));padding:10px 14px;display:flex;align-items:center;gap:9px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
-.compare-bar.show{transform:translateY(0)}
+.compare-bar{position:fixed;bottom:var(--nh);left:0;right:0;z-index:750;background:linear-gradient(135deg,var(--p),var(--pd));padding:10px 14px;display:flex;align-items:center;gap:9px;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1); visibility: hidden; opacity: 0; pointer-events: none;}
+.compare-bar.show{transform:translateY(0); visibility: visible; opacity: 1; pointer-events: auto;}
 .compare-item{width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,.2);border:1.5px dashed rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
 .compare-item img{width:100%;height:100%;object-fit:cover}
 
@@ -753,7 +693,6 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
         <div class="pmi" onclick="showTrack()"><div class="pmi-ico" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-truck"></i></div><span class="pmi-lbl">Track Your Order</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="doLogout()"><div class="pmi-ico" style="background:#ffebee;color:#c62828"><i class="fas fa-sign-out-alt"></i></div><span class="pmi-lbl">Logout</span><i class="fas fa-chevron-right pmi-arr"></i></div>
       </div>
-      <div style="height:16px"></div>
     </div>
 
     <!-- NOTIFICATIONS PAGE -->
@@ -1023,8 +962,12 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 
 <script>
 // ============================================================
-//  FIREBASE INIT
+//  FIREBASE INIT - Safety wrapped
 // ============================================================
+if(typeof firebase === 'undefined'){
+  document.body.innerHTML = '<div style="padding:30px;font-family:sans-serif;text-align:center;background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:48px;margin-bottom:16px">💡</div><h2 style="color:#2874f0;font-family:sans-serif">Prince Enterprise</h2><p style="color:#666;margin-top:8px">Loading... Please check your internet connection.</p><button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;background:#2874f0;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">Retry</button></div>';
+  throw new Error('Firebase not loaded');
+}
 const firebaseConfig = {
   apiKey:"AIzaSyAe6eT4TVO1k16ky01dOBalOQUcVOYzrw0",
   authDomain:"honest-talk-5b839.firebaseapp.com",
@@ -1058,14 +1001,13 @@ let banIdx       = 0;
 let flashTimer   = null;
 let checkoutTotal= 0;
 let banLen       = 5;
-let recentlyViewed = JSON.parse(localStorage.getItem('pe_rv')||'[]');
-let userAddresses=[], selectedAddrId=null, _addrType='Home';
 
 // ============================================================
 //  SPLASH → AUTH
 // ============================================================
 window.addEventListener('load', () => {
   initDarkMode();
+  // Keep both auth and app hidden until splash ends
   document.getElementById('authWrap').classList.add('hidden');
   document.getElementById('app').classList.add('hidden');
 
@@ -1074,10 +1016,12 @@ window.addEventListener('load', () => {
     sp.style.opacity = '0';
     sp.style.transform = 'scale(1.06)';
     setTimeout(async () => {
-      _authReady = true; 
+      _authReady = true; // allow auth handler to run
+      // If Firebase already fired (fast network), handle now
       if (_pendingUser !== undefined) {
         await _handleAuthUser(_pendingUser);
       }
+      // If still waiting (slow network), _handleAuthUser will fire when ready
     }, 500);
   }, 2800);
 });
@@ -1122,6 +1066,10 @@ async function doLogin(){
     showToast('Welcome back!');
   }catch(e){
     let msg=e.message.replace('Firebase:','').replace(/\(.*?\)/g,'').trim();
+    if(e.code==='auth/user-not-found')msg='No account found with this email. Please sign up.';
+    if(e.code==='auth/wrong-password')msg='Incorrect password. Please try again.';
+    if(e.code==='auth/invalid-credential')msg='Invalid email or password. Please check and retry.';
+    if(e.code==='auth/too-many-requests')msg='Too many failed attempts. Please try again later.';
     showErr('loginErr',msg);
     btn.innerHTML='<span>Login</span>';
   }
@@ -1158,7 +1106,9 @@ async function doSignup(){
       role:'customer',
       uid:cred.user.uid
     };
+    // Write to Firebase FIRST, then proceed
     await db.ref('users/'+cred.user.uid).set(userData);
+    // Now show app
     window._signingUp=false;
     currentUser=cred.user;
     const ok=document.getElementById('signupOk');
@@ -1173,6 +1123,9 @@ async function doSignup(){
   }catch(e){
     window._signingUp=false;
     let msg=e.message.replace('Firebase:','').replace(/\(.*?\)/g,'').trim();
+    if(e.code==='auth/email-already-in-use')msg='This email is already registered. Please login instead.';
+    if(e.code==='auth/invalid-email')msg='Please enter a valid email address.';
+    if(e.code==='auth/weak-password')msg='Password is too weak. Use at least 6 characters.';
     showErr('signupErr',msg);
     btn.innerHTML='<span>Create Account</span>';
   }
@@ -1191,6 +1144,7 @@ async function doGoogle(){
   try{
     const res=await auth.signInWithPopup(prov);
     const u=res.user;
+    // Check if user doc exists; if not, create full profile
     const existing=await db.ref('users/'+u.uid).get();
     if(!existing.val()){
       await db.ref('users/'+u.uid).set({
@@ -1206,19 +1160,25 @@ async function doGoogle(){
       await db.ref('users/'+u.uid).update({name:u.displayName,email:u.email,lastLogin:Date.now()});
     }
     showToast('Welcome '+( u.displayName||'')+'!');
-  }catch(e){ showToast(e.message); }
+  }catch(e){
+    let msg=e.message;
+    if(e.code==='auth/popup-closed-by-user')msg='Sign-in popup was closed. Please try again.';
+    showToast(msg);
+  }
 }
 
 // ============================================================
 //  AUTH STATE LISTENER
 // ============================================================
+// ── AUTH STATE GATE ──────────────────────────────────────────────────────
+// Holds the auth result until the splash is done
 let _authReady = false;
-let _pendingUser = undefined;
+let _pendingUser = undefined; // undefined = not yet received
 
 auth.onAuthStateChanged(async user => {
-  if (window._signingUp) return;
-  _pendingUser = user;
-  if (_authReady) await _handleAuthUser(user);
+  if (window._signingUp) return; // signup handled manually
+  _pendingUser = user; // store result
+  if (_authReady) await _handleAuthUser(user); // splash already done → act now
 });
 
 async function _handleAuthUser(user) {
@@ -1236,103 +1196,88 @@ async function _handleAuthUser(user) {
   }
 }
 
-// Safe Loading Function with Catch Blocks
 async function loadAppData(){
-  // Profile
-  try {
-    const snap=await db.ref('users/'+currentUser.uid).get();
-    let udata=snap.val();
-    if(!udata){
-      udata={
-        name:currentUser.displayName||currentUser.email.split('@')[0]||'User',
-        email:currentUser.email||'', phone:'', address:'',
-        createdAt:Date.now(), role:'customer', uid:currentUser.uid
-      };
-      await db.ref('users/'+currentUser.uid).set(udata);
-    }
-    const name = udata.name || currentUser.displayName || currentUser.email.split('@')[0] || 'User';
-    const email = udata.email || currentUser.email || '';
-    
-    // Explicitly target profAvTxt to not overwrite the image elements
-    const avTxt = document.getElementById('profAvTxt');
-    if (avTxt) avTxt.textContent = (name[0]||'U').toUpperCase();
-    
-    document.getElementById('profName').textContent = name;
-    document.getElementById('profEmail').textContent = email;
-  } catch(e) { console.error('Profile Error', e); }
+  // Profile — if user doc doesn't exist yet (e.g. Google sign-in), create it
+  const snap=await db.ref('users/'+currentUser.uid).get();
+  let udata=snap.val();
+  if(!udata){
+    udata={
+      name:currentUser.displayName||currentUser.email.split('@')[0]||'User',
+      email:currentUser.email||'',
+      phone:'',address:'',
+      createdAt:Date.now(),role:'customer',uid:currentUser.uid
+    };
+    await db.ref('users/'+currentUser.uid).set(udata);
+  }
+  const name = udata.name || currentUser.displayName || currentUser.email.split('@')[0] || 'User';
+  const email = udata.email || currentUser.email || '';
+  const phone = udata.phone || '';
+  // Update ALL profile UI elements safely
+  const profAv = document.getElementById('profAv');
+  const profAvTxt = document.getElementById('profAvTxt');
+  const profName = document.getElementById('profName');
+  const profEmail = document.getElementById('profEmail');
+  if(profAv) profAv.textContent = (name[0]||'U').toUpperCase();
+  if(profAvTxt) profAvTxt.textContent = (name[0]||'U').toUpperCase();
+  if(profName) profName.textContent = name;
+  if(profEmail) profEmail.textContent = email;
 
-  // Settings
-  try {
-    const setSnap=await db.ref('appSettings').get();
-    appSettings=setSnap.val()||{upiId:'princeenterprise@upi'};
-  } catch(e) { console.error('Settings Error', e); }
+  // App Settings
+  const setSnap=await db.ref('appSettings').get();
+  appSettings=setSnap.val()||{upiId:'princeenterprise@upi'};
 
   // Products
-  try {
-    const pSnap=await db.ref('products').get();
-    if(pSnap.val()){
-      allProducts=Object.entries(pSnap.val()).map(([id,p])=>({id,...p}));
-    } else {
-      allProducts=[]; 
-    }
-  } catch(e) { 
-    console.error('Products Error', e); 
-    allProducts=[]; 
+  const pSnap=await db.ref('products').get();
+  if(pSnap.val()){
+    allProducts=Object.entries(pSnap.val()).map(([id,p])=>({id,...p}));
+  } else {
+    allProducts=defaultProducts();
+    allProducts.forEach(p=>db.ref('products/'+p.id).set(p));
   }
 
-  // Cart
-  try {
-    const cSnap=await db.ref('carts/'+currentUser.uid).get();
-    cart=cSnap.val()?Object.values(cSnap.val()):[];
-  } catch(e) { cart=[]; }
-
-  // Wishlist
-  try {
-    const wSnap=await db.ref('wishlists/'+currentUser.uid).get();
-    wishlist=wSnap.val()?Object.values(wSnap.val()):[];
-  } catch(e) { wishlist=[]; }
+  // Cart & Wishlist
+  const cSnap=await db.ref('carts/'+currentUser.uid).get();
+  cart=cSnap.val()?Object.values(cSnap.val()):[];
+  const wSnap=await db.ref('wishlists/'+currentUser.uid).get();
+  wishlist=wSnap.val()?Object.values(wSnap.val()):[];
 
   // Orders
-  try {
-    const oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
-    orderHistory=oSnap.val()?Object.entries(oSnap.val()).map(([id,o])=>({id,...o})).reverse():[];
-  } catch(e) { 
-    console.error('Orders Error', e); 
-    orderHistory=[]; 
-  }
+  const oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
+  orderHistory=oSnap.val()?Object.entries(oSnap.val()).map(([id,o])=>({id,...o})).reverse():[];
 
   // Coupons
-  try {
-    const couSnap=await db.ref('coupons').get();
-    coupons=couSnap.val()?Object.values(couSnap.val()).filter(c=>c.active):[];
-  } catch(e) { coupons=[]; }
+  const couSnap=await db.ref('coupons').get();
+  coupons=couSnap.val()?Object.values(couSnap.val()).filter(c=>c.active):[];
 
   // Notifications
-  try {
-    const nSnap=await db.ref('notifications/'+currentUser.uid).get();
-    notifications=nSnap.val()?Object.values(nSnap.val()).reverse():[];
-  } catch(e) { notifications=[]; }
-
-  try { await loadAddresses(); } catch(e) { console.error('Address error', e); }
-  try { await loadAvatar(); } catch(e) { console.error('Avatar error', e); }
+  const nSnap=await db.ref('notifications/'+currentUser.uid).get();
+  notifications=nSnap.val()?Object.values(nSnap.val()).reverse():defaultNotifs();
 
   renderAll();
   initBanner();
   startFlashTimer();
-  askNotifPermission();
-
-  const def=userAddresses.find(a=>a.isDefault)||userAddresses[0];
-  if(def){
-    const full=[def.line1,def.line2,def.city,def.state,def.pin].filter(Boolean).join(', ');
-    const codEl=document.getElementById('codAddress');
-    if(codEl) codEl.textContent=(def.name?def.name+' · ':'')+full;
-  }
 }
 
 // ============================================================
 //  DEFAULT DATA
 // ============================================================
-// Categories
+function defaultProducts(){
+  return [
+    {id:'p1',name:'Prince 9W LED Bulb Warm White',category:'Bulbs',price:79,originalPrice:149,discount:47,rating:4.5,reviews:128,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:50,isNew:true,isBestSeller:true,description:'Energy efficient 9W LED bulb with warm white light. 270° beam angle. Lasts 25,000 hours.',wattage:'9W',voltage:'220-240V',color:'Warm White 3000K',warranty:'2 Years'},
+    {id:'p2',name:'RGB LED Strip 5M with Remote',category:'Strip Lights',price:399,originalPrice:799,discount:50,rating:4.3,reviews:89,image:'https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=400',stock:30,isNew:true,isFlashDeal:true,description:'5 meter RGB LED strip with 44-key remote. Waterproof IP65. Self-adhesive backing.',wattage:'24W',voltage:'12V DC',color:'RGB Multicolor',warranty:'1 Year'},
+    {id:'p3',name:'Prince LED Panel Light 12W',category:'Panel Lights',price:299,originalPrice:550,discount:46,rating:4.6,reviews:214,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:45,isBestSeller:true,isFlashDeal:true,description:'Square panel light 12W ultra slim. Flicker-free. Perfect for office and home ceilings.',wattage:'12W',voltage:'220V',color:'Day White 6500K',warranty:'3 Years'},
+    {id:'p4',name:'LED Street Light 30W Outdoor',category:'Outdoor',price:899,originalPrice:1599,discount:44,rating:4.4,reviews:67,image:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400',stock:20,description:'Heavy duty 30W outdoor street light. IP66 waterproof. Wide beam 120°.',wattage:'30W',voltage:'220V',color:'Cool White 6500K',warranty:'2 Years'},
+    {id:'p5',name:'Smart WiFi LED Bulb 9W RGB',category:'Smart Lights',price:549,originalPrice:999,discount:45,rating:4.7,reviews:156,image:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400',stock:35,isNew:true,isBestSeller:true,description:'Works with Google Home & Alexa. 16 million colors. Voice &amp; app controlled.',wattage:'9W',voltage:'220V',color:'RGB + Warm White',warranty:'1 Year'},
+    {id:'p6',name:'LED Tube Light 18W 4ft',category:'Tube Lights',price:199,originalPrice:350,discount:43,rating:4.2,reviews:98,image:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',stock:60,isBestSeller:true,description:'T8 LED tube light 18W replacing 40W fluorescent. Instant start. No flicker.',wattage:'18W',voltage:'220V',color:'Cool White',warranty:'2 Years'},
+    {id:'p7',name:'LED Downlight 7W Recessed',category:'Downlights',price:149,originalPrice:280,discount:47,rating:4.4,reviews:175,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:80,isFlashDeal:true,description:'7W recessed LED downlight. Cut-out 75mm. Sleek design for modern interiors.',wattage:'7W',voltage:'220V',color:'Neutral White 4000K',warranty:'2 Years'},
+    {id:'p8',name:'Solar LED Garden Light',category:'Outdoor',price:499,originalPrice:899,discount:44,rating:4.1,reviews:44,image:'https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=400',stock:25,isNew:true,description:'Solar powered garden stake light. Auto on/off. Weatherproof.',wattage:'2W Solar',voltage:'Solar',color:'Warm White',warranty:'1 Year'},
+    {id:'p9',name:'LED Flood Light 50W',category:'Outdoor',price:699,originalPrice:1200,discount:42,rating:4.5,reviews:88,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:15,isBestSeller:true,description:'50W LED flood light for stadium, parking, warehouse. IP66 rated.',wattage:'50W',voltage:'220V',color:'Day Light',warranty:'2 Years'},
+    {id:'p10',name:'Neon Flex LED Strip 1M',category:'Decorative',price:299,originalPrice:499,discount:40,rating:4.3,reviews:62,image:'https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=400',stock:40,isNew:true,isFlashDeal:true,description:'Neon flex LED 1 meter. Bendable 360°. Perfect for signage and decor.',wattage:'10W',voltage:'12V',color:'Multiple Colors',warranty:'1 Year'},
+    {id:'p11',name:'LED Emergency Bulb 9W',category:'Bulbs',price:249,originalPrice:420,discount:41,rating:4.6,reviews:133,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:55,description:'Built-in battery. Works during power cuts for 4+ hours. B22 base.',wattage:'9W',voltage:'220V',color:'Warm White',warranty:'1 Year'},
+    {id:'p12',name:'LED Chandelier 24W 5-Blade',category:'Decorative',price:1299,originalPrice:2499,discount:48,rating:4.8,reviews:29,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:10,isNew:true,description:'Modern LED chandelier. 5-blade fan-style. Remote included. Dimmable.',wattage:'24W',voltage:'220V',color:'RGB + Cool White',warranty:'2 Years'},
+  ];
+}
+
 const categories=[
   {name:'Bulbs',icon:'💡',color:'#fff8e1',iconColor:'#f57f17'},
   {name:'Strip Lights',icon:'🌈',color:'#f3e5f5',iconColor:'#7b1fa2'},
@@ -1341,8 +1286,16 @@ const categories=[
   {name:'Smart Lights',icon:'📡',color:'#e8eaf6',iconColor:'#3949ab'},
   {name:'Tube Lights',icon:'🔦',color:'#fce4ec',iconColor:'#c2185b'},
   {name:'Downlights',icon:'🔆',color:'#fff3e0',iconColor:'#e65100'},
-  {name:'Decorative',icon:'✨',color:'#fbe9e7',iconColor:'#bf360c'}
+  {name:'Decorative',icon:'✨',color:'#fbe9e7',iconColor:'#bf360c'},
 ];
+
+function defaultNotifs(){
+  return [
+    {id:'n1',title:'Welcome to Prince Enterprise!',desc:'Get 10% off your first order with code PRINCE10',time:'Just now',icon:'🎉',iconBg:'#e8f5e9',iconColor:'#2e7d32',unread:true},
+    {id:'n2',title:'Flash Sale Alert 🔥',desc:'Up to 60% off on LED products. Offer ends tonight!',time:'1h ago',icon:'⚡',iconBg:'#fff8e1',iconColor:'#f57f17',unread:true},
+    {id:'n3',title:'New Smart Lights Arrived',desc:'Check out our latest WiFi-enabled smart bulbs',time:'2d ago',icon:'💡',iconBg:'#e3f2fd',iconColor:'#1565c0',unread:false},
+  ];
+}
 
 // ============================================================
 //  RENDER
@@ -1357,7 +1310,6 @@ function renderAll(){
   renderWishlist();
   renderOrders();
   renderNotifs();
-  renderRecentlyViewed();
   updateBadges();
 }
 
@@ -1398,6 +1350,7 @@ function renderAllProducts(filtered=null){
     el.innerHTML=list.map(p=>pcCard(p,'')).join('');
   }
   const chips=document.getElementById('filterChips');
+  const active=filtered?'all':null;
   chips.innerHTML=`<span class="chip ${!filtered?'on':''}" onclick="renderAllProducts()">All</span>`+
     categories.map(c=>`<span class="chip" onclick="filterCat('${c.name}')">${c.name}</span>`).join('');
 }
@@ -1437,8 +1390,6 @@ function openPD(pid){
   const p=allProducts.find(x=>x.id===pid);
   if(!p)return;
   currentPD=p;pdQty=1;
-  trackView(pid);
-
   const wl=wishlist.some(w=>w.id===p.id);
   document.getElementById('pdWishBtn').innerHTML=`<i class="${wl?'fas':'far'} fa-heart"></i>`;
   document.getElementById('pdContent').innerHTML=`
@@ -1474,38 +1425,49 @@ function openPD(pid){
       <i class="fas fa-truck"></i>
       <div><strong>Free Delivery</strong> on orders above ₹500 | Est. 3-5 days</div>
     </div>
+    <div class="offers-sec">
+      <div style="font-size:13px;font-weight:800;margin-bottom:7px;font-family:'Exo 2',sans-serif">Available Offers</div>
+      <div class="offer-tag"><i class="fas fa-tag"></i><div><strong>Bank Offer:</strong> 10% off on first order. Use code <strong>PRINCE10</strong></div></div>
+      <div class="offer-tag"><i class="fas fa-gift"></i><div><strong>Buy 2+:</strong> Get extra 5% off on LED bulbs</div></div>
+      <div class="offer-tag"><i class="fas fa-shipping-fast"></i><div><strong>Free Installation</strong> on orders above ₹2000 (local area)</div></div>
+    </div>
     <div class="pdspecs">
       <div class="sphd">Specifications</div>
       ${p.wattage?`<div class="spr"><span class="spk">Wattage</span><span class="spv">${p.wattage}</span></div>`:''}
       ${p.voltage?`<div class="spr"><span class="spk">Voltage</span><span class="spv">${p.voltage}</span></div>`:''}
       ${p.color?`<div class="spr"><span class="spk">Color Temp</span><span class="spv">${p.color}</span></div>`:''}
       ${p.warranty?`<div class="spr"><span class="spk">Warranty</span><span class="spv">${p.warranty}</span></div>`:''}
+      <div class="spr"><span class="spk">Category</span><span class="spv">${p.category}</span></div>
+      <div class="spr"><span class="spk">Brand</span><span class="spv">Prince Enterprise</span></div>
+      <div class="spr"><span class="spk">SKU</span><span class="spv">PE-${p.id.toUpperCase()}</span></div>
     </div>
     <div class="pdcard" style="margin-top:8px">
       <div class="sphd">Description</div>
       <p style="font-size:13px;color:var(--t2);line-height:1.6">${p.description||'High quality LED product from Prince Enterprise.'}</p>
     </div>
-    <div id="pdExtraActs" style="display:flex;gap:8px;padding:8px 12px;background:var(--c);border-top:1px solid var(--b);margin-top:8px">
-      <button onclick="addToCompare('${pid}');showToast('Added to compare')" style="flex:1;padding:9px;background:var(--pl);color:var(--p);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-code-compare"></i> Compare</button>
-      <button onclick="setPriceAlert('${pid}')" style="flex:1;padding:9px;background:#fff8e1;color:#e65100;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-bell"></i> Alert</button>
-      <button onclick="shareProductSheet('${pid}')" style="flex:1;padding:9px;background:#e8f5e9;color:#2e7d32;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-share-alt"></i> Share</button>
-    </div>
-    <div class="pdsticky">
-      <div class="pdcart" onclick="addToCart('${p.id}')">Add to Cart</div>
-      <div class="pdbuy" onclick="addToCart('${p.id}'); openCart()">Buy Now</div>
+    <div class="pdrevs">
+      <div class="sphd">Customer Reviews</div>
+      ${[...Array(3)].map((_,i)=>revCard(i)).join('')}
     </div>
   `;
-  
   document.getElementById('pdPanel').classList.add('show');
   document.getElementById('main').scrollTop=0;
+}
 
-  setTimeout(() => {
-    const mainImg = document.getElementById('pdMainImg');
-    if(mainImg && p){
-      mainImg.style.cursor = 'zoom-in';
-      mainImg.onclick = ()=>openZoom(mainImg.src);
-    }
-  }, 50);
+function revCard(i){
+  const names=['Rohit S.','Priya M.','Arun K.'];
+  const txts=['Excellent quality! Bright and energy efficient. Highly recommend.','Great product, fast delivery. Will buy again.','Good value for money. Lights look great in my living room.'];
+  const rats=[5,4,4.5];
+  const dates=['2d ago','1w ago','2w ago'];
+  return `<div class="rev">
+    <div class="rev-top">
+      <div class="rev-av">${names[i][0]}</div>
+      <span class="rev-name">${names[i]}</span>
+      <span class="ratb" style="font-size:10px"><i class="fas fa-star"></i> ${rats[i]}</span>
+      <span class="rev-date">${dates[i]}</span>
+    </div>
+    <p class="rev-body">${txts[i]}</p>
+  </div>`;
 }
 
 function changePDImg(el,src){
@@ -1600,8 +1562,8 @@ function cartQty(pid,d){
 
 function applyCoupon(){
   const code=document.getElementById('couponIn').value.trim().toUpperCase();
-  const c=coupons.find(x=>x.code===code);
-  if(c){showToast(`Coupon applied! ${c.discount}${c.type==='percent'?'%':'₹'} off`);}
+  const c=coupons.find(x=>x.code===code)||{code:'PRINCE10',discount:10,type:'percent'};
+  if(code===c.code){showToast(`Coupon applied! ${c.discount}${c.type==='percent'?'%':'₹'} off`);}
   else showToast('Invalid coupon code');
 }
 
@@ -1880,8 +1842,8 @@ function editProfile(){
     sheet.id = 'editProfileSheet';
     sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
     sheet.innerHTML = `
-      <div onclick="document.getElementById('editProfileSheet').remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
-      <div style="background:var(--c);border-radius:20px 20px 0 0;padding:0 0 24px;max-height:92vh;overflow-y:auto;position:relative;z-index:1;animation:sheetUp .3s cubic-bezier(.4,0,.2,1)">
+      <div onclick="document.getElementById('editProfileSheet').remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.65)"></div>
+      <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;padding:0 0 24px;max-height:92vh;overflow-y:auto;position:relative;z-index:900;animation:sheetUp .3s cubic-bezier(.4,0,.2,1)">
         <div style="padding:12px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c);z-index:5">
           <div style="width:40px;height:4px;background:var(--b);border-radius:2px;margin:0 auto 12px"></div>
           <div style="display:flex;align-items:center;justify-content:space-between">
@@ -1977,8 +1939,8 @@ function showCoupons(){
 function showSheet(title,html){
   const m=document.createElement('div');m.id='dynSheet';
   m.style.cssText='position:fixed;inset:0;z-index:900;display:flex;align-items:flex-end';
-  m.innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.5)" onclick="this.parentElement.remove()"></div>
-    <div style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;position:relative;z-index:1;animation:sheetUp .3s ease both">
+  m.innerHTML=`<div style="position:absolute;inset:0;background:rgba(0,0,0,.65)" onclick="this.parentElement.remove()"></div>
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;width:100%;max-height:85vh;overflow-y:auto;position:relative;z-index:900;animation:sheetUp .3s ease both">
       <div style="padding:16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c)">
         <div style="width:36px;height:4px;background:var(--b);border-radius:2px;margin:0 auto 10px"></div>
         <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800">${title}</h3>
@@ -2005,47 +1967,6 @@ function doLogout(){
 document.addEventListener('click',e=>{
   if(!e.target.closest('.hbar'))document.getElementById('sugBox').classList.add('hidden');
 });
-
-// ============================================================
-//  SWIPE GESTURES
-// ============================================================
-(function initSwipeGestures(){
-  let ts=0,tx=0,ty=0;
-  const pages=['home','products','orders','wishlist','profile'];
-
-  document.addEventListener('touchstart',e=>{
-    ts=e.touches[0].clientX;
-    tx=e.touches[0].clientX;
-    ty=e.touches[0].clientY;
-  },{passive:true});
-
-  document.addEventListener('touchmove',e=>{tx=e.touches[0].clientX;},{passive:true});
-
-  document.addEventListener('touchend',e=>{
-    const dx=tx-ts, dy=e.changedTouches[0].clientY-ty;
-    const absX=Math.abs(dx), absY=Math.abs(dy);
-    
-    // Decreased tab switching sensitivity - horizontal swipe requires much larger pull
-    if(absX>120 && absX>absY*3){
-      const active=document.querySelector('.pview.show');
-      // Ensure we aren't swiping on a product carousel or similar inside element
-      if(e.target.closest('.pscr, .pdthumbs, .rv-strip')) return;
-      const pg=active?active.id.replace('pg','').toLowerCase():'';
-      const idx=pages.indexOf(pg);
-      if(dx<0 && idx<pages.length-1) navTo(pages[idx+1]); 
-      if(dx>0 && idx>0)              navTo(pages[idx-1]);  
-    }
-    
-    // Bottom Sheet swipe down handler
-    if(dy>100 && absX<40){
-      if(!document.getElementById('invoiceModal').classList.contains('hidden')) closeInvoice();
-      if(!document.getElementById('addrModal').classList.contains('hidden')) closeAddrModal();
-      if(!document.getElementById('addAddrModal').classList.contains('hidden')) closeAddAddr();
-      if(!document.getElementById('avatarModal').classList.contains('hidden')) closeAvatarModal();
-      if(!document.getElementById('payModal').classList.contains('hidden')) closePayModal();
-    }
-  },{passive:true});
-})();
 
 // ============================================================
 //  MULTI-ADDRESS SYSTEM
@@ -2294,7 +2215,7 @@ function sendLocalNotif(title,body){
 }
 
 // ============================================================
-//  SHEET SWIPE-TO-CLOSE HELPER
+//  SHEET SWIPE-TO-CLOSE HELPER (Only for bottom sheets)
 // ============================================================
 function initSheetSwipe(sheetId, closeFn){
   const el=document.getElementById(sheetId); if(!el)return;
@@ -2341,8 +2262,8 @@ function openLiveChat(){
   sheet.id = 'chatSheet';
   sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
   sheet.innerHTML = `
-    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
-    <div style="background:var(--c);border-radius:20px 20px 0 0;padding:0;max-height:75vh;display:flex;flex-direction:column;position:relative;z-index:1;animation:sheetUp .3s ease">
+    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.65)"></div>
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;padding:0;max-height:75vh;display:flex;flex-direction:column;position:relative;z-index:900;animation:sheetUp .3s ease">
       <div style="background:linear-gradient(135deg,#7b1fa2,#4a148c);padding:14px 16px;border-radius:20px 20px 0 0;display:flex;align-items:center;gap:10px">
         <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:#fff"><i class="fas fa-headset"></i></div>
         <div><div style="font-size:14px;font-weight:700;color:#fff">Prince Enterprise Support</div><div style="font-size:11px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;background:#4caf50;border-radius:50%;display:inline-block"></span> Online Now</div></div>
@@ -2412,12 +2333,12 @@ function runCompare(){
   if(compareList.length < 2){ showToast('Select 2 products to compare'); return; }
   const [a,b] = compareList.map(id=>allProducts.find(p=>p.id===id));
   if(!a||!b) return;
-  const rows = [['Price','₹'+a.price,'₹'+b.price],['Rating',a.rating+'⭐',b.rating+'⭐'],['Category',a.category,b.category],['Wattage',a.wattage||'—',b.wattage||'—'],['Voltage',a.voltage||'—',b.voltage||'—'],['Warranty',a.warranty||'—',b.warranty||'—'],['Stock',a.stock+' units',b.stock+' units'],['Discount',a.discount+'%',b.discount+'%']];
+  const rows = [['Price','₹'+a.price,'₹'+b.price],['Rating',(a.rating||0)+'⭐',(b.rating||0)+'⭐'],['Category',a.category,b.category],['Wattage',a.wattage||'—',b.wattage||'—'],['Voltage',a.voltage||'—',b.voltage||'—'],['Warranty',a.warranty||'—',b.warranty||'—'],['Stock',(a.stock||0)+' units',(b.stock||0)+' units'],['Discount',(a.discount||0)+'%',(b.discount||0)+'%']];
   const sheet = document.createElement('div');
   sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
   sheet.innerHTML = `
-    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
-    <div style="background:var(--c);border-radius:20px 20px 0 0;max-height:88vh;overflow-y:auto;position:relative;z-index:1;padding-bottom:20px">
+    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.65)"></div>
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;max-height:88vh;overflow-y:auto;position:relative;z-index:900;padding-bottom:20px">
       <div style="padding:12px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c)">
         <div class="pull-close-bar" onclick="this.closest('div[style*=fixed]').remove()" style="margin-bottom:10px"></div>
         <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800">Product Comparison</h3>
@@ -2475,8 +2396,8 @@ function shareProductSheet(pid){
   const sheet = document.createElement('div');
   sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
   sheet.innerHTML = `
-    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
-    <div style="background:var(--c);border-radius:20px 20px 0 0;padding:16px 14px 28px;position:relative;z-index:1;animation:sheetUp .3s ease">
+    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.65)"></div>
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;padding:16px 14px 28px;position:relative;z-index:900;animation:sheetUp .3s ease">
       <div class="pull-close-bar" onclick="this.closest('div[style*=fixed]').remove()" style="margin-bottom:14px"></div>
       <h3 style="font-family:'Exo 2',sans-serif;font-size:15px;font-weight:800;margin-bottom:14px">Share Product</h3>
       <div class="share-grid">
@@ -2496,8 +2417,8 @@ function openCancelOrder(ordId){
   sheet.id = 'cancelSheet';
   sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
   sheet.innerHTML = `
-    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
-    <div style="background:var(--c);border-radius:20px 20px 0 0;padding:16px 14px 28px;position:relative;z-index:1">
+    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.65)"></div>
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;padding:16px 14px 28px;position:relative;z-index:900">
       <div class="pull-close-bar" style="margin-bottom:14px"></div>
       <h3 style="font-family:'Exo 2',sans-serif;font-size:16px;font-weight:800;margin-bottom:14px">Cancel Order?</h3>
       <p style="font-size:13px;color:var(--m);margin-bottom:14px">Select a reason for cancellation:</p>
@@ -2530,8 +2451,8 @@ function showLoyaltyPoints(){
     const sheet = document.createElement('div');
     sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
     sheet.innerHTML = `
-      <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
-      <div style="background:var(--c);border-radius:20px 20px 0 0;padding:0 0 24px;position:relative;z-index:1;animation:sheetUp .3s ease">
+      <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.65)"></div>
+      <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;padding:0 0 24px;position:relative;z-index:900;animation:sheetUp .3s ease">
         <div style="padding:12px 16px;border-bottom:1px solid var(--d)">
           <div class="pull-close-bar" onclick="this.closest('div[style*=fixed]').remove()" style="margin-bottom:10px"></div>
           <h3 style="font-family:'Exo 2',sans-serif;font-size:17px;font-weight:800">Loyalty Points</h3>
@@ -2556,8 +2477,8 @@ function openBulkOrder(){
   const sheet = document.createElement('div');
   sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
   sheet.innerHTML = `
-    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.5)"></div>
-    <div style="background:var(--c);border-radius:20px 20px 0 0;max-height:90vh;overflow-y:auto;position:relative;z-index:1;padding-bottom:24px">
+    <div onclick="this.parentElement.remove()" style="position:absolute;inset:0;background:rgba(0,0,0,.65)"></div>
+    <div class="sheet-inner" style="background:var(--c);border-radius:20px 20px 0 0;max-height:90vh;overflow-y:auto;position:relative;z-index:900;padding-bottom:24px">
       <div style="padding:12px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c)">
         <div class="pull-close-bar" onclick="this.closest('div[style*=fixed]').remove()" style="margin-bottom:10px"></div>
         <h3 style="font-family:'Exo 2',sans-serif;font-size:17px;font-weight:800">Bulk Order Request</h3>
@@ -2635,6 +2556,51 @@ function addProfileExtras(){
   `;
   pmenu.parentNode.insertBefore(extras, pmenu.nextSibling);
 }
+
+// ── Patch openPD to track recently viewed + add zoom + compare + share ─────
+const _origOpenPD = openPD;
+openPD = function(pid){
+  _origOpenPD(pid);
+  trackView(pid);
+  setTimeout(()=>{
+    const pdSticky = document.querySelector('#pdPanel .pdsticky');
+    const p = allProducts.find(x=>x.id===pid);
+    if(pdSticky && p){
+      let extras = document.getElementById('pdExtraActs');
+      if(!extras){
+        extras = document.createElement('div');
+        extras.id = 'pdExtraActs';
+        extras.style.cssText = 'display:flex;gap:8px;padding:8px 12px;background:var(--c);border-top:1px solid var(--b)';
+        extras.innerHTML = `
+          <button onclick="addToCompare('${pid}');showToast('Added to compare')" style="flex:1;padding:9px;background:var(--pl);color:var(--p);border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-code-compare"></i> Compare</button>
+          <button onclick="setPriceAlert('${pid}')" style="flex:1;padding:9px;background:#fff8e1;color:#e65100;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-bell"></i> Alert</button>
+          <button onclick="shareProductSheet('${pid}')" style="flex:1;padding:9px;background:#e8f5e9;color:#2e7d32;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px"><i class="fas fa-share-alt"></i> Share</button>
+        `;
+        pdSticky.parentNode.insertBefore(extras, pdSticky);
+      }
+    }
+    const mainImg = document.getElementById('pdMainImg');
+    if(mainImg && p){
+      mainImg.style.cursor = 'zoom-in';
+      mainImg.onclick = ()=>openZoom(mainImg.src);
+    }
+  }, 100);
+};
+
+// ── Patch navTo to add profile extras ────────────────────────────
+const _origNavTo = navTo;
+navTo = function(pg){
+  _origNavTo(pg);
+  if(pg==='profile') setTimeout(addProfileExtras, 50);
+};
+
+// ── Add Recently Viewed section to home ──────────────────────────
+const _origRenderAll = renderAll;
+renderAll = function(){
+  _origRenderAll();
+  renderRecentlyViewed();
+};
+
 </script>
 </body>
 </html>
