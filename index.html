@@ -16,7 +16,7 @@
 window.addEventListener('error', function(e){
   if(e.message && e.message.includes('firebase')){
     console.error('Firebase load error:', e.message);
-    document.body.innerHTML = '<div style="padding:30px;font-family:sans-serif;text-align:center"><h2 style="color:#e53935">⚠️ Connection Error</h2><p>Could not load Firebase. Please check your internet connection and reload.</p><button onclick="location.reload()" style="margin-top:14px;padding:12px 24px;background:#2874f0;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">Reload</button></div>';
+    document.body.innerHTML = '<div style="padding:30px;font-family:sans-serif;text-align:center"><h2 style="color:#e53935">⚠️ Connection Error</h2><p>Could not load Firebase. Please check your internet connection and reload.</p><button onclick="if(navigator.onLine){location.reload();}else{showToast('Still offline. Please connect to internet first.');}" style="margin-top:14px;padding:12px 24px;background:#2874f0;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">Reload</button></div>';
   }
 });
 </script>
@@ -476,9 +476,20 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 /* 10. Referral */
 .ref-card{background:linear-gradient(135deg,#1565c0,#0d47a1);border-radius:var(--rd);padding:16px;color:#fff;margin:10px;text-align:center}
 .ref-code{font-family:'Exo 2',monospace;font-size:22px;font-weight:900;letter-spacing:3px;background:rgba(255,255,255,.15);padding:8px 16px;border-radius:8px;display:inline-block;margin:10px 0}
+@keyframes pgFadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.pview.show{animation:pgFadeIn .22s ease both}
 </style>
 </head>
 <body>
+
+
+<!-- OFFLINE / NO FIREBASE BANNER -->
+<div id="offlineBanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:linear-gradient(135deg,#e65100,#bf360c);color:#fff;padding:10px 14px;align-items:center;gap:10px;box-shadow:0 2px 12px rgba(0,0,0,.3)">
+  <i class="fas fa-wifi-slash" style="font-size:18px;flex-shrink:0"></i>
+  <div style="flex:1;font-size:12.5px;font-weight:600">No internet connection. Some features may not work.</div>
+  <button onclick="if(navigator.onLine){location.reload();}else{showToast('Still offline. Please connect to internet first.');}" style="background:rgba(255,255,255,.2);color:#fff;border:1.5px solid rgba(255,255,255,.4);border-radius:6px;padding:5px 11px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">Retry</button>
+  <div onclick="document.getElementById('offlineBanner').style.display='none'" style="cursor:pointer;opacity:.75;font-size:16px;padding:2px 4px;flex-shrink:0">✕</div>
+</div>
 
 <!-- SPLASH -->
 <div id="splash">
@@ -551,7 +562,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
   <!-- HEADER -->
   <header id="hdr">
     <div class="hbrand" onclick="navTo('home')">
-      <div class="hbico"><i class="fas fa-lightbulb"></i></div>
+      <div class="hbico"><i class="fas fa-lightbulb" style="color:var(--p)"></i></div>
       <div class="hbtxt"><h3>Prince</h3><span>Enterprise</span></div>
     </div>
     <div class="hbar">
@@ -665,35 +676,83 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 
     <!-- PROFILE PAGE -->
     <div id="pgProfile" class="pview">
-      <div class="prof-hdr">
-        <div class="prof-av" id="profAv" onclick="openAvatarModal()" style="cursor:pointer;position:relative">
-          <span id="profAvTxt">U</span>
-          <img id="profAvImg" style="position:absolute;inset:0;width:100%;height:100%;border-radius:50%;object-fit:cover;display:none">
-          <div style="position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--p);border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid #fff"><i class="fas fa-camera" style="font-size:8px;color:#fff"></i></div>
+      <!-- Profile Hero Card -->
+      <div style="background:linear-gradient(135deg,var(--p) 0%,var(--pd) 60%,#0d47a1 100%);padding:20px 16px 24px;position:relative;overflow:hidden">
+        <!-- BG decoration -->
+        <div style="position:absolute;top:-30px;right:-30px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.07)"></div>
+        <div style="position:absolute;bottom:-20px;left:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
+        <div style="display:flex;align-items:center;gap:14px;position:relative;z-index:1">
+          <!-- Avatar -->
+          <div onclick="openAvatarModal()" style="cursor:pointer;position:relative;flex-shrink:0">
+            <div id="profAv" style="width:68px;height:68px;border-radius:50%;background:rgba(255,255,255,.25);border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;font-family:'Exo 2',sans-serif;font-size:26px;font-weight:900;color:#fff;position:relative">
+              <span id="profAvTxt">U</span>
+              <img id="profAvImg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none">
+            </div>
+            <div style="position:absolute;bottom:0;right:0;width:20px;height:20px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--p)">
+              <i class="fas fa-camera" style="font-size:9px;color:var(--p)"></i>
+            </div>
+          </div>
+          <!-- Name & Email -->
+          <div style="flex:1;min-width:0">
+            <h2 id="profName" style="font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">User</h2>
+            <p id="profEmail" style="font-size:12.5px;color:rgba(255,255,255,.8);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">user@email.com</p>
+            <p id="profPhone" style="font-size:12px;color:rgba(255,255,255,.65);margin-top:2px"></p>
+          </div>
+          <!-- Edit button -->
+          <div onclick="editProfile()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.3)'" onmouseout="this.style.background='rgba(255,255,255,.2)'">
+            <i class="fas fa-edit" style="color:#fff;font-size:15px"></i>
+          </div>
         </div>
-        <div class="prof-name"><h3 id="profName">User</h3><p id="profEmail">user@email.com</p></div>
-        <div class="prof-edit" onclick="editProfile()"><i class="fas fa-edit"></i></div>
+        <!-- Quick Stats Row -->
+        <div style="display:flex;gap:0;margin-top:16px;background:rgba(255,255,255,.1);border-radius:12px;overflow:hidden;position:relative;z-index:1">
+          <div onclick="navTo('orders')" style="flex:1;text-align:center;padding:10px 6px;cursor:pointer;border-right:1px solid rgba(255,255,255,.15)">
+            <div id="statOrders" style="font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;color:#fff">0</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,.75)">Orders</div>
+          </div>
+          <div onclick="navTo('wishlist')" style="flex:1;text-align:center;padding:10px 6px;cursor:pointer;border-right:1px solid rgba(255,255,255,.15)">
+            <div id="statWish" style="font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;color:#fff">0</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,.75)">Wishlist</div>
+          </div>
+          <div onclick="showLoyaltyPoints()" style="flex:1;text-align:center;padding:10px 6px;cursor:pointer">
+            <div id="statPts" style="font-family:'Exo 2',sans-serif;font-size:20px;font-weight:900;color:#ffe500">0</div>
+            <div style="font-size:10.5px;color:rgba(255,255,255,.75)">Points</div>
+          </div>
+        </div>
       </div>
-      <div class="pmenu" style="margin-top:10px">
+
+      <!-- My Account Menu -->
+      <div class="pmenu" style="margin:10px 10px 0">
         <div class="pmenu-hd">My Account</div>
-        <div class="pmi" onclick="navTo('orders')"><div class="pmi-ico" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-box"></i></div><span class="pmi-lbl">My Orders</span><i class="fas fa-chevron-right pmi-arr"></i></div>
+        <div class="pmi" onclick="navTo('orders')"><div class="pmi-ico" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-box"></i></div><span class="pmi-lbl">My Orders</span><span id="ordCountBadge" style="background:var(--s);color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 7px;margin-right:6px;display:none">0</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="navTo('wishlist')"><div class="pmi-ico" style="background:#fce4ec;color:#c2185b"><i class="fas fa-heart"></i></div><span class="pmi-lbl">Wishlist</span><i class="fas fa-chevron-right pmi-arr"></i></div>
-        <div class="pmi" onclick="openAddrModal()"><div class="pmi-ico" style="background:#e8f5e9;color:#2e7d32"><i class="fas fa-map-marker-alt"></i></div><span class="pmi-lbl">Manage Addresses</span><span id="addrCountBadge" style="background:var(--p);color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 7px;margin-right:4px">0</span><i class="fas fa-chevron-right pmi-arr"></i></div>
-        <div class="pmi" onclick="navTo('notifs')"><div class="pmi-ico" style="background:#fff8e1;color:#f57f17"><i class="fas fa-bell"></i></div><span class="pmi-lbl">Notifications</span><i class="fas fa-chevron-right pmi-arr"></i></div>
+        <div class="pmi" onclick="openAddrModal()"><div class="pmi-ico" style="background:#e8f5e9;color:#2e7d32"><i class="fas fa-map-marker-alt"></i></div><span class="pmi-lbl">Manage Addresses</span><span id="addrCountBadge" style="background:var(--p);color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 7px;margin-right:6px">0</span><i class="fas fa-chevron-right pmi-arr"></i></div>
+        <div class="pmi" onclick="navTo('notifs')"><div class="pmi-ico" style="background:#fff8e1;color:#f57f17"><i class="fas fa-bell"></i></div><span class="pmi-lbl">Notifications</span><span id="notifCountBadge" style="background:var(--r);color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 7px;margin-right:6px;display:none">0</span><i class="fas fa-chevron-right pmi-arr"></i></div>
       </div>
-      <div class="pmenu">
-        <div class="pmenu-hd">Preferences</div>
-        <div class="dark-row"><label>Dark Mode</label><div class="tog" id="darkTog" onclick="toggleDark()"></div></div>
+
+      <!-- Rewards Menu -->
+      <div class="pmenu" style="margin:8px 10px 0">
+        <div class="pmenu-hd">Rewards & Offers</div>
+        <div class="pmi" onclick="showLoyaltyPoints()"><div class="pmi-ico" style="background:#fff8e1;color:#f57c00"><i class="fas fa-star"></i></div><span class="pmi-lbl">Loyalty Points</span><span id="loyaltyBadge" style="background:#f57c00;color:#fff;border-radius:10px;font-size:10px;font-weight:800;padding:1px 7px;margin-right:6px">0 pts</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="showCoupons()"><div class="pmi-ico" style="background:#f3e5f5;color:#7b1fa2"><i class="fas fa-tag"></i></div><span class="pmi-lbl">My Coupons</span><i class="fas fa-chevron-right pmi-arr"></i></div>
+        <div class="pmi" onclick="openReferral()"><div class="pmi-ico" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-gift"></i></div><span class="pmi-lbl">Refer & Earn</span><i class="fas fa-chevron-right pmi-arr"></i></div>
+        <div class="pmi" onclick="openBulkOrder()"><div class="pmi-ico" style="background:#e8f5e9;color:#2e7d32"><i class="fas fa-boxes"></i></div><span class="pmi-lbl">Bulk Order Enquiry</span><i class="fas fa-chevron-right pmi-arr"></i></div>
       </div>
-      <!-- Extras will be injected here on load -->
-      <div class="pmenu">
+
+      <!-- Preferences Menu -->
+      <div class="pmenu" style="margin:8px 10px 0">
+        <div class="pmenu-hd">Preferences</div>
+        <div class="dark-row" style="padding:13px 14px;border-bottom:1px solid var(--d);display:flex;align-items:center;justify-content:space-between"><label style="font-size:13.5px;font-weight:600">Dark Mode</label><div class="tog" id="darkTog" onclick="toggleDark()"></div></div>
+      </div>
+
+      <!-- Support Menu -->
+      <div class="pmenu" style="margin:8px 10px 0">
         <div class="pmenu-hd">Support</div>
+        <div class="pmi" onclick="openLiveChat()"><div class="pmi-ico" style="background:#f3e5f5;color:#7b1fa2"><i class="fas fa-headset"></i></div><span class="pmi-lbl">Live Chat Support</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="contactWA()"><div class="pmi-ico" style="background:#e8f5e9;color:#2e7d32"><i class="fab fa-whatsapp"></i></div><span class="pmi-lbl">WhatsApp Support</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="showTrack()"><div class="pmi-ico" style="background:#e3f2fd;color:#1565c0"><i class="fas fa-truck"></i></div><span class="pmi-lbl">Track Your Order</span><i class="fas fa-chevron-right pmi-arr"></i></div>
         <div class="pmi" onclick="doLogout()"><div class="pmi-ico" style="background:#ffebee;color:#c62828"><i class="fas fa-sign-out-alt"></i></div><span class="pmi-lbl">Logout</span><i class="fas fa-chevron-right pmi-arr"></i></div>
       </div>
-      <div style="height:16px"></div>
+      <div style="height:20px"></div>
     </div>
 
     <!-- NOTIFICATIONS PAGE -->
@@ -738,9 +797,9 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 
 <!-- PAYMENT MODAL -->
 <div id="payModal" class="hidden">
-  <div class="overlay" onclick="closePayModal()"></div>
-  <div class="pm-sheet">
-    <div class="pm-hdr"><div class="pm-drag"></div><h3>Complete Payment — ₹<span id="pmTotal">0</span></h3></div>
+  <div class="overlay" style="pointer-events:none"></div>
+  <div class="pm-sheet" onclick="event.stopPropagation()">
+    <div class="pm-hdr"><div class="pm-drag"></div><div style="display:flex;align-items:center;justify-content:space-between"><h3>Complete Payment — ₹<span id="pmTotal">0</span></h3><div onclick="closePayModal()" style="width:28px;height:28px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--m);flex-shrink:0">✕</div></div></div>
     <div class="pm-tabs">
       <div class="pmtab on" onclick="switchPay('upi')" id="pt-upi"><i class="fas fa-qrcode"></i> UPI / QR</div>
       <div class="pmtab" onclick="switchPay('cod')" id="pt-cod"><i class="fas fa-hand-holding-usd"></i> Cash on Delivery</div>
@@ -963,31 +1022,147 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 
 <script>
 // ============================================================
-//  FIREBASE INIT - Safety wrapped
+//  FIREBASE INIT
 // ============================================================
-if(typeof firebase === 'undefined'){
-  document.body.innerHTML = '<div style="padding:30px;font-family:sans-serif;text-align:center;background:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="font-size:48px;margin-bottom:16px">💡</div><h2 style="color:#2874f0;font-family:sans-serif">Prince Enterprise</h2><p style="color:#666;margin-top:8px">Loading... Please check your internet connection.</p><button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;background:#2874f0;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer">Retry</button></div>';
-  throw new Error('Firebase not loaded');
+// Async Firebase initializer with retry — never crashes the app
+let auth, db;
+let _fbReady = false;
+let _fbInitAttempts = 0;
+
+function initFirebase() {
+  return new Promise((resolve) => {
+    function tryInit() {
+      _fbInitAttempts++;
+      if (typeof firebase !== 'undefined' && firebase.app) {
+        try {
+          // Already initialized guard
+          if (!firebase.apps.length) {
+            firebase.initializeApp({
+              apiKey:"AIzaSyAe6eT4TVO1k16ky01dOBalOQUcVOYzrw0",
+              authDomain:"honest-talk-5b839.firebaseapp.com",
+              databaseURL:"https://honest-talk-5b839-default-rtdb.firebaseio.com",
+              projectId:"honest-talk-5b839",
+              storageBucket:"honest-talk-5b839.firebasestorage.app",
+              messagingSenderId:"479110931464",
+              appId:"1:479110931464:web:37bc3a606b8160bae9ddbd",
+              measurementId:"G-25W032HEEC"
+            });
+          }
+          auth = firebase.auth();
+          db   = firebase.database();
+          _fbReady = true;
+          console.log('Firebase ready ✓');
+          resolve(true);
+        } catch(e) {
+          console.error('Firebase init error:', e);
+          resolve(false);
+        }
+      } else if (_fbInitAttempts < 20) {
+        // Firebase scripts still loading — retry every 300ms
+        console.log('Waiting for Firebase… attempt', _fbInitAttempts);
+        setTimeout(tryInit, 300);
+      } else {
+        // After 6s still not loaded — show offline banner but DON'T crash
+        console.warn('Firebase CDN not reachable after 6s. Running in offline mode.');
+        showOfflineBanner();
+        resolve(false);
+      }
+    }
+    tryInit();
+  });
 }
-const firebaseConfig = {
-  apiKey:"AIzaSyAe6eT4TVO1k16ky01dOBalOQUcVOYzrw0",
-  authDomain:"honest-talk-5b839.firebaseapp.com",
-  databaseURL:"https://honest-talk-5b839-default-rtdb.firebaseio.com",
-  projectId:"honest-talk-5b839",
-  storageBucket:"honest-talk-5b839.firebasestorage.app",
-  messagingSenderId:"479110931464",
-  appId:"1:479110931464:web:37bc3a606b8160bae9ddbd",
-  measurementId:"G-25W032HEEC"
+
+function showOfflineBanner() {
+  const el = document.getElementById('offlineBanner');
+  if (el) el.style.display = 'flex';
+}
+
+// Stub auth & db so nothing else crashes if Firebase never loads
+auth = {
+  onAuthStateChanged: (cb) => { cb(null); return ()=>{}; },
+  signInWithEmailAndPassword: () => Promise.reject(new Error('No internet connection')),
+  createUserWithEmailAndPassword: () => Promise.reject(new Error('No internet connection')),
+  sendPasswordResetEmail: () => Promise.reject(new Error('No internet connection')),
+  signInWithPopup: () => Promise.reject(new Error('No internet connection')),
+  signOut: () => Promise.resolve(),
+  currentUser: null
 };
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db   = firebase.database();
+db = {
+  ref: () => ({
+    get: () => Promise.resolve({ val: () => null }),
+    set: () => Promise.resolve(),
+    update: () => Promise.resolve(),
+    remove: () => Promise.resolve(),
+    on: () => {},
+    off: () => {},
+    once: () => Promise.resolve({ val: () => null }),
+    orderByChild: () => ({ equalTo: () => ({ get: () => Promise.resolve({ val: () => null }) }) }),
+    transaction: (fn) => Promise.resolve({ val: () => null }),
+    limitToLast: () => ({ get: () => Promise.resolve({ val: () => null }) })
+  })
+};
+
+// Start Firebase init immediately
+initFirebase().then(ok => {
+  if (ok) {
+    // Re-register onAuthStateChanged with real auth
+    auth.onAuthStateChanged(async user => {
+      if (window._signingUp) return;
+      _pendingUser = user;
+      if (_authReady) await _handleAuthUser(user);
+    });
+  }
+});
 
 // ============================================================
 //  STATE
 // ============================================================
 let currentUser = null;
 window._signingUp = false;
+
+// ── IndexedDB Cache ──────────────────────────────────────────────
+const IDB_NAME = 'PrinceEnterpriseDB';
+const IDB_VER  = 1;
+let _idb = null;
+
+function openIDB(){
+  return new Promise((res,rej)=>{
+    if(_idb){ res(_idb); return; }
+    const req = indexedDB.open(IDB_NAME, IDB_VER);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if(!db.objectStoreNames.contains('store')) db.createObjectStore('store');
+    };
+    req.onsuccess = e => { _idb = e.target.result; res(_idb); };
+    req.onerror   = e => { console.warn('IDB error', e); res(null); };
+  });
+}
+
+async function saveToIDB(key, value){
+  try{
+    const db = await openIDB(); if(!db) return;
+    const tx = db.transaction('store','readwrite');
+    tx.objectStore('store').put(JSON.stringify(value), key);
+  }catch(e){ console.warn('IDB save error', e); }
+}
+
+async function loadFromIDB(key){
+  try{
+    const db = await openIDB(); if(!db) return null;
+    return new Promise(res=>{
+      const req = db.transaction('store','readonly').objectStore('store').get(key);
+      req.onsuccess = ()=> res(req.result ? JSON.parse(req.result) : null);
+      req.onerror   = ()=> res(null);
+    });
+  }catch(e){ return null; }
+}
+
+async function clearIDB(){
+  try{
+    const db = await openIDB(); if(!db) return;
+    db.transaction('store','readwrite').objectStore('store').clear();
+  }catch(e){}
+}
 let allProducts  = [];
 let cart         = [];
 let wishlist     = [];
@@ -1010,7 +1185,6 @@ let userAddresses=[], selectedAddrId=null, _addrType='Home';
 // ============================================================
 window.addEventListener('load', () => {
   initDarkMode();
-  // Keep both auth and app hidden until splash ends
   document.getElementById('authWrap').classList.add('hidden');
   document.getElementById('app').classList.add('hidden');
 
@@ -1019,12 +1193,23 @@ window.addEventListener('load', () => {
     sp.style.opacity = '0';
     sp.style.transform = 'scale(1.06)';
     setTimeout(async () => {
-      _authReady = true; // allow auth handler to run
-      // If Firebase already fired (fast network), handle now
+      _authReady = true;
+      // If Firebase loaded and auth already fired
       if (_pendingUser !== undefined) {
         await _handleAuthUser(_pendingUser);
+      } else if (!_fbReady) {
+        // Firebase still loading — show auth page after short wait
+        // so user is not stuck on splash forever
+        setTimeout(async () => {
+          if (_pendingUser !== undefined) {
+            await _handleAuthUser(_pendingUser);
+          } else {
+            // No auth result yet — show auth screen
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('authWrap').classList.remove('hidden');
+          }
+        }, 3000);
       }
-      // If still waiting (slow network), _handleAuthUser will fire when ready
     }, 500);
   }, 2800);
 });
@@ -1058,6 +1243,7 @@ function showErr(id,msg){const el=document.getElementById(id);el.classList.remov
 function hideErr(id){document.getElementById(id).classList.add('hidden');}
 
 async function doLogin(){
+  if(!_fbReady){ showErr('loginErr','No internet connection. Please check your connection and retry.'); return; }
   const email=document.getElementById('loginEmail').value.trim();
   const pass=document.getElementById('loginPass').value;
   hideErr('loginErr');
@@ -1094,6 +1280,7 @@ async function doSignup(){
   if(!agree){showErr('signupErr','Please accept Terms & Conditions');return;}
   const btn=document.getElementById('signupBtn');
   btn.innerHTML='<div class="loader"></div>';
+  if(!_fbReady){ showErr('signupErr','No internet connection. Please check your connection and retry.'); btn.innerHTML='<span>Create Account</span>'; return; }
   window._signingUp=true;
   try{
     const cred=await auth.createUserWithEmailAndPassword(email,pass);
@@ -1174,15 +1361,10 @@ async function doGoogle(){
 //  AUTH STATE LISTENER
 // ============================================================
 // ── AUTH STATE GATE ──────────────────────────────────────────────────────
-// Holds the auth result until the splash is done
 let _authReady = false;
-let _pendingUser = undefined; // undefined = not yet received
-
-auth.onAuthStateChanged(async user => {
-  if (window._signingUp) return; // signup handled manually
-  _pendingUser = user; // store result
-  if (_authReady) await _handleAuthUser(user); // splash already done → act now
-});
+let _pendingUser = undefined;
+// onAuthStateChanged is registered inside initFirebase().then() above
+// This runs after Firebase is confirmed ready
 
 async function _handleAuthUser(user) {
   if (user) {
@@ -1200,6 +1382,17 @@ async function _handleAuthUser(user) {
 }
 
 async function loadAppData(){
+  // ── Try loading cached data from IndexedDB first (instant UI) ──
+  const cachedProds = await loadFromIDB('products');
+  if(cachedProds && cachedProds.length > 0){
+    allProducts = cachedProds;
+    renderFlashDeals(); renderNewArrivals(); renderBestSellers(); renderAllProducts();
+  }
+  const cachedCart = await loadFromIDB('cart_'+( currentUser?.uid||''));
+  if(cachedCart) { cart = cachedCart; renderCart(); updateBadges(); }
+  const cachedWL = await loadFromIDB('wl_'+(currentUser?.uid||''));
+  if(cachedWL) { wishlist = cachedWL; renderWishlist(); }
+
   // Profile — if user doc doesn't exist yet (e.g. Google sign-in), create it
   const snap=await db.ref('users/'+currentUser.uid).get();
   let udata=snap.val();
@@ -1216,28 +1409,46 @@ async function loadAppData(){
   const email = udata.email || currentUser.email || '';
   const phone = udata.phone || '';
   // Update ALL profile UI elements safely
-  const profAv = document.getElementById('profAv');
   const profAvTxt = document.getElementById('profAvTxt');
   const profName = document.getElementById('profName');
   const profEmail = document.getElementById('profEmail');
-  if(profAv) profAv.textContent = (name[0]||'U').toUpperCase();
+  const profPhone = document.getElementById('profPhone');
   if(profAvTxt) profAvTxt.textContent = (name[0]||'U').toUpperCase();
   if(profName) profName.textContent = name;
   if(profEmail) profEmail.textContent = email;
-  // Also update header brand if needed
-  console.log('Profile loaded:', name, email);
+  if(profPhone && phone) profPhone.textContent = '📱 '+phone;
+  // Update quick stats
+  setTimeout(()=>{
+    const so = document.getElementById('statOrders'); if(so) so.textContent = orderHistory.length;
+    const sw = document.getElementById('statWish');   if(sw) sw.textContent = wishlist.length;
+    const ob = document.getElementById('ordCountBadge');
+    if(ob && orderHistory.filter(o=>o.status==='Confirmed'||o.status==='Processing').length > 0){
+      ob.textContent = orderHistory.filter(o=>o.status==='Confirmed'||o.status==='Processing').length;
+      ob.style.display='inline-block';
+    }
+    // Load loyalty points
+    db.ref('loyalty/'+(currentUser?.uid||'')+'/points').get().then(s=>{
+      const pts = s.val()||0;
+      const sp = document.getElementById('statPts'); if(sp) sp.textContent = pts;
+      const lb = document.getElementById('loyaltyBadge'); if(lb) lb.textContent = pts+' pts';
+    });
+  }, 200);
 
   // App Settings
   const setSnap=await db.ref('appSettings').get();
   appSettings=setSnap.val()||{upiId:'princeenterprise@upi'};
 
-  // Products
+  // Products — always load defaults if Firebase empty, then save them
   const pSnap=await db.ref('products').get();
-  if(pSnap.val()){
+  if(pSnap.val() && Object.keys(pSnap.val()).length > 0){
     allProducts=Object.entries(pSnap.val()).map(([id,p])=>({id,...p}));
   } else {
-    allProducts=[]; 
+    allProducts=defaultProducts();
+    // Save defaults to Firebase for persistence
+    allProducts.forEach(p=>db.ref('products/'+p.id).set(p).catch(()=>{}));
   }
+  // Always cache to IndexedDB
+  saveToIDB('products', allProducts);
 
   // Cart & Wishlist
   const cSnap=await db.ref('carts/'+currentUser.uid).get();
@@ -1275,6 +1486,25 @@ const categories=[
   {name:'Downlights',icon:'🔆',color:'#fff3e0',iconColor:'#e65100'},
   {name:'Decorative',icon:'✨',color:'#fbe9e7',iconColor:'#bf360c'}
 ];
+
+
+// ── DEFAULT PRODUCTS (fallback when Firebase is empty) ──────────
+function defaultProducts(){
+  return [
+    {id:'p1',name:'Prince 9W LED Bulb Warm White',category:'Bulbs',price:79,originalPrice:149,discount:47,rating:4.5,reviews:128,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:50,isNew:true,isBestSeller:true,description:'Energy efficient 9W LED bulb. 270° beam. 25,000 hrs life.',wattage:'9W',voltage:'220V',color:'Warm White 3000K',warranty:'2 Years'},
+    {id:'p2',name:'RGB LED Strip 5M with Remote',category:'Strip Lights',price:399,originalPrice:799,discount:50,rating:4.3,reviews:89,image:'https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=400',stock:30,isNew:true,isFlashDeal:true,description:'5M RGB strip with 44-key remote. IP65 waterproof.',wattage:'24W',voltage:'12V DC',color:'RGB Multicolor',warranty:'1 Year'},
+    {id:'p3',name:'Prince LED Panel Light 12W',category:'Panel Lights',price:299,originalPrice:550,discount:46,rating:4.6,reviews:214,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:45,isBestSeller:true,isFlashDeal:true,description:'Square panel 12W ultra slim. Flicker-free.',wattage:'12W',voltage:'220V',color:'Day White 6500K',warranty:'3 Years'},
+    {id:'p4',name:'LED Street Light 30W Outdoor',category:'Outdoor',price:899,originalPrice:1599,discount:44,rating:4.4,reviews:67,image:'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?w=400',stock:20,description:'30W outdoor street light. IP66 waterproof.',wattage:'30W',voltage:'220V',color:'Cool White 6500K',warranty:'2 Years'},
+    {id:'p5',name:'Smart WiFi LED Bulb 9W RGB',category:'Smart Lights',price:549,originalPrice:999,discount:45,rating:4.7,reviews:156,image:'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400',stock:35,isNew:true,isBestSeller:true,description:'Works with Google Home & Alexa. 16M colors.',wattage:'9W',voltage:'220V',color:'RGB + Warm White',warranty:'1 Year'},
+    {id:'p6',name:'LED Tube Light 18W 4ft',category:'Tube Lights',price:199,originalPrice:350,discount:43,rating:4.2,reviews:98,image:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400',stock:60,isBestSeller:true,description:'T8 18W tube replacing 40W fluorescent.',wattage:'18W',voltage:'220V',color:'Cool White',warranty:'2 Years'},
+    {id:'p7',name:'LED Downlight 7W Recessed',category:'Downlights',price:149,originalPrice:280,discount:47,rating:4.4,reviews:175,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:80,isFlashDeal:true,description:'7W recessed downlight. Cut-out 75mm.',wattage:'7W',voltage:'220V',color:'Neutral White 4000K',warranty:'2 Years'},
+    {id:'p8',name:'Solar LED Garden Light',category:'Outdoor',price:499,originalPrice:899,discount:44,rating:4.1,reviews:44,image:'https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=400',stock:25,isNew:true,description:'Solar powered garden stake. Auto on/off.',wattage:'2W Solar',voltage:'Solar',color:'Warm White',warranty:'1 Year'},
+    {id:'p9',name:'LED Flood Light 50W',category:'Outdoor',price:699,originalPrice:1200,discount:42,rating:4.5,reviews:88,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:15,isBestSeller:true,description:'50W flood light. IP66 rated. Wide 120° beam.',wattage:'50W',voltage:'220V',color:'Day Light',warranty:'2 Years'},
+    {id:'p10',name:'Neon Flex LED Strip 1M',category:'Decorative',price:299,originalPrice:499,discount:40,rating:4.3,reviews:62,image:'https://images.unsplash.com/photo-1603739903239-8b6e64c3b185?w=400',stock:40,isNew:true,isFlashDeal:true,description:'Neon flex LED 1M. Bendable 360°.',wattage:'10W',voltage:'12V',color:'Multiple',warranty:'1 Year'},
+    {id:'p11',name:'LED Emergency Bulb 9W',category:'Bulbs',price:249,originalPrice:420,discount:41,rating:4.6,reviews:133,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:55,description:'Built-in battery. Works 4+ hrs during cuts.',wattage:'9W',voltage:'220V',color:'Warm White',warranty:'1 Year'},
+    {id:'p12',name:'LED Chandelier 24W 5-Blade',category:'Decorative',price:1299,originalPrice:2499,discount:48,rating:4.8,reviews:29,image:'https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400',stock:10,isNew:true,description:'Modern 24W chandelier. Remote + dimmable.',wattage:'24W',voltage:'220V',color:'RGB + White',warranty:'2 Years'},
+  ];
+}
 
 // ============================================================
 //  RENDER
@@ -1323,7 +1553,20 @@ function renderBestSellers(){
 }
 function renderAllProducts(filtered=null){
   const el=document.getElementById('allProductsGrid');
+  if(!el) return;
   const list=filtered||allProducts;
+  // If empty and not filtered, try loading from IDB one more time
+  if(!list.length && !filtered){
+    loadFromIDB('products').then(cached=>{
+      if(cached && cached.length){
+        allProducts=cached;
+        el.innerHTML=allProducts.map(p=>pcCard(p,'')).join('');
+      } else {
+        el.innerHTML='<div class="page-empty" style="grid-column:1/-1"><i class="fas fa-lightbulb" style="font-size:48px;opacity:.2;display:block;margin-bottom:12px"></i><h3>Loading Products…</h3><p style="font-size:12.5px">Check your internet connection</p></div>';
+      }
+    });
+    return;
+  }
   if(!list.length) {
     el.innerHTML = `<div class="page-empty" style="grid-column:1/-1"><i class="fas fa-box-open"></i><h3>No Products</h3><p>Check back later.</p></div>`;
   } else {
@@ -1479,7 +1722,8 @@ function removeCart(pid){
 function saveCart(){
   if(!currentUser)return;
   const obj={};cart.forEach((c,i)=>obj[i]=c);
-  db.ref('carts/'+currentUser.uid).set(obj);
+  db.ref('carts/'+currentUser.uid).set(obj).catch(()=>{});
+  saveToIDB('cart_'+currentUser.uid, cart);
   updateBadges();
 }
 function openCart(){
@@ -1620,7 +1864,8 @@ function toggleWishlist(pid){
   if(idx>-1){wishlist.splice(idx,1);showToast('Removed from wishlist');}
   else{const p=allProducts.find(x=>x.id===pid);if(p){wishlist.push(p);showToast('Added to wishlist');}}
   const obj={};wishlist.forEach((w,i)=>obj[i]=w);
-  db.ref('wishlists/'+currentUser.uid).set(obj);
+  db.ref('wishlists/'+currentUser.uid).set(obj).catch(()=>{});
+  saveToIDB('wl_'+currentUser.uid, wishlist);
   renderAll();
   if(currentPD){const wl=wishlist.some(w=>w.id===currentPD.id);document.getElementById('pdWishBtn').innerHTML=`<i class="${wl?'fas':'far'} fa-heart"></i>`;}
 }
@@ -1928,6 +2173,7 @@ function closeSuccess(){document.getElementById('successModal').classList.add('h
 function doLogout(){
   if(!confirm('Are you sure you want to logout?')) return;
   auth.signOut().then(()=>{
+    clearIDB();
     cart=[];wishlist=[];currentUser=null;orderHistory=[];notifications=[];
     document.getElementById('app').classList.add('hidden');
     document.getElementById('authWrap').classList.remove('hidden');
@@ -2605,6 +2851,34 @@ renderAll = function(){
   _origRenderAll();
   renderRecentlyViewed();
 };
+
+
+// ── Network Status Monitor ────────────────────────────────────────
+window.addEventListener('online', () => {
+  document.getElementById('offlineBanner').style.display = 'none';
+  if (!_fbReady) {
+    showToast('Back online! Reconnecting…');
+    initFirebase().then(ok => {
+      if (ok) {
+        showToast('Connected! ✓');
+        // Re-register auth listener
+        auth.onAuthStateChanged(async user => {
+          if (window._signingUp) return;
+          _pendingUser = user;
+          if (_authReady) await _handleAuthUser(user);
+        });
+        if (_authReady) {
+          auth.onAuthStateChanged(async user => { await _handleAuthUser(user); });
+        }
+      }
+    });
+  }
+});
+
+window.addEventListener('offline', () => {
+  showOfflineBanner();
+  showToast('You are offline. Showing cached data.');
+});
 
 </script>
 </body>
