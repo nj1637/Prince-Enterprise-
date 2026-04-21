@@ -1614,17 +1614,46 @@ async function loadAppData(){
   const setSnap=await db.ref('appSettings').get();
   appSettings=setSnap.val()||{upiId:'princeenterprise@upi'};
 
-  // Products -- always load defaults if Firebase empty, then save them
+  // Products -- realtime listener so admin changes reflect immediately
+  db.ref('products').on('value', snap=>{
+    if(snap.val() && Object.keys(snap.val()).length > 0){
+      allProducts=Object.entries(snap.val()).map(([id,p])=>({id,...p}));
+    } else {
+      allProducts=defaultProducts();
+      allProducts.forEach(p=>db.ref('products/'+p.id).set(p).catch(()=>{}));
+    }
+    saveToIDB('products', allProducts);
+    renderFlashDeals(); renderNewArrivals(); renderBestSellers(); renderAllProducts();
+  });
+  // One-time load for initial render
   const pSnap=await db.ref('products').get();
   if(pSnap.val() && Object.keys(pSnap.val()).length > 0){
     allProducts=Object.entries(pSnap.val()).map(([id,p])=>({id,...p}));
   } else {
     allProducts=defaultProducts();
-    // Save defaults to Firebase for persistence
     allProducts.forEach(p=>db.ref('products/'+p.id).set(p).catch(()=>{}));
   }
-  // Always cache to IndexedDB
   saveToIDB('products', allProducts);
+
+  // Banners -- load from Firebase (admin-managed)
+  db.ref('banners').on('value', snap=>{
+    if(snap.val()){
+      const bans=Object.values(snap.val()).filter(b=>b.active).sort((a,b)=>(a.order||0)-(b.order||0));
+      if(bans.length>0) renderDynamicBanners(bans);
+    }
+  });
+  const banSnap=await db.ref('banners').get();
+  if(banSnap.val()){
+    const bans=Object.values(banSnap.val()).filter(b=>b.active).sort((a,b)=>(a.order||0)-(b.order||0));
+    if(bans.length>0) renderDynamicBanners(bans);
+  }
+
+  // Coupons -- realtime so admin enable/disable reflects immediately
+  db.ref('coupons').on('value', snap=>{
+    coupons=snap.val()?Object.values(snap.val()).filter(c=>c.active):[];
+  });
+  const couSnap2=await db.ref('coupons').get();
+  if(couSnap2.val()) coupons=Object.values(couSnap2.val()).filter(c=>c.active);
 
   // Cart & Wishlist
   const cSnap=await db.ref('carts/'+currentUser.uid).get();
@@ -1658,9 +1687,7 @@ async function loadAppData(){
     });
   }catch(e){ console.warn('Orders load error:',e); orderHistory=[]; renderOrders(); }
 
-  // Coupons
-  const couSnap=await db.ref('coupons').get();
-  coupons=couSnap.val()?Object.values(couSnap.val()).filter(c=>c.active):[];
+  // Coupons already set above via realtime listener
 
   // Notifications
   const nSnap=await db.ref('notifications/'+currentUser.uid).get();
@@ -2305,9 +2332,26 @@ function doSearch(q){
 // ============================================================
 //  BANNER
 // ============================================================
+function renderDynamicBanners(bans){
+  const bgColors=['#0d1b5e','#4a0073','#1b4010','#7c1010','#1a3a5c','#2d1b00'];
+  const track=document.getElementById('banTrack');
+  const dotsEl=document.getElementById('banDots');
+  if(!track||!dotsEl)return;
+  track.innerHTML=bans.map((b,i)=>`
+    <div class="bslide" style="background:linear-gradient(135deg,${b.bg||bgColors[i%bgColors.length]},${b.bg||bgColors[i%bgColors.length]}99)">
+      <span class="bbadge">${b.badge||''}</span>
+      <h2 class="bh">${b.title||''}</h2>
+      <p class="bp">${b.sub||''}</p>
+      <span class="bbtn" onclick="navTo('products')">Shop Now →</span>
+    </div>`).join('');
+  banLen=bans.length||5;
+  banIdx=0;
+  dotsEl.innerHTML=bans.map((_,i)=>`<div class="bdot ${i===0?'on':''}" onclick="goBan(${i})"></div>`).join('');
+}
+
 function initBanner(){
   const dots=document.getElementById('banDots');
-  dots.innerHTML=[...Array(banLen)].map((_,i)=>`<div class="bdot ${i===0?'on':''}" onclick="goBan(${i})"></div>`).join('');
+  if(dots) dots.innerHTML=[...Array(banLen)].map((_,i)=>`<div class="bdot ${i===0?'on':''}" onclick="goBan(${i})"></div>`).join('');
   setInterval(()=>goBan((banIdx+1)%banLen),4000);
 }
 function goBan(i){
