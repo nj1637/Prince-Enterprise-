@@ -1148,7 +1148,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 // ============================================================
 //  FIREBASE INIT
 // ============================================================
-// Async Firebase initializer with retry — never crashes the app
+// Async Firebase initializer with retry -- never crashes the app
 let auth, db;
 let _fbReady = false;
 let _fbInitAttempts = 0;
@@ -1182,11 +1182,11 @@ function initFirebase() {
           resolve(false);
         }
       } else if (_fbInitAttempts < 20) {
-        // Firebase scripts still loading — retry every 300ms
-        console.log('Waiting for Firebase… attempt', _fbInitAttempts);
+        // Firebase scripts still loading -- retry every 300ms
+        console.log('Waiting for Firebase... attempt', _fbInitAttempts);
         setTimeout(tryInit, 300);
       } else {
-        // After 6s still not loaded — show offline banner but DON'T crash
+        // After 6s still not loaded -- show offline banner but DON'T crash
         console.warn('Firebase CDN not reachable after 6s. Running in offline mode.');
         showOfflineBanner();
         resolve(false);
@@ -1244,7 +1244,7 @@ initFirebase().then(ok => {
 let currentUser = null;
 window._signingUp = false;
 
-// ── IndexedDB Cache ──────────────────────────────────────────────
+// -- IndexedDB Cache ----------------------------------------------
 const IDB_NAME = 'PrinceEnterpriseDB';
 const IDB_VER  = 1;
 let _idb = null;
@@ -1314,25 +1314,21 @@ window.addEventListener('load', () => {
 
   setTimeout(() => {
     const sp = document.getElementById('splash');
+    sp.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
     sp.style.opacity = '0';
     sp.style.transform = 'scale(1.06)';
     setTimeout(async () => {
       _authReady = true;
-      // If Firebase loaded and auth already fired
       if (_pendingUser !== undefined) {
+        // Auth already fired before splash ended
         await _handleAuthUser(_pendingUser);
-      } else if (!_fbReady) {
-        // Firebase still loading — show auth page after short wait
-        // so user is not stuck on splash forever
-        setTimeout(async () => {
-          if (_pendingUser !== undefined) {
-            await _handleAuthUser(_pendingUser);
-          } else {
-            // No auth result yet — show auth screen
-            document.getElementById('splash').style.display = 'none';
-            document.getElementById('authWrap').classList.remove('hidden');
-          }
-        }, 3000);
+      } else {
+        // Auth hasn't fired yet -- wait up to 4s then force auth screen
+        window._splashFallback = setTimeout(() => {
+          const sp2 = document.getElementById('splash');
+          if (sp2) sp2.style.display = 'none';
+          document.getElementById('authWrap').classList.remove('hidden');
+        }, 4000);
       }
     }, 500);
   }, 2800);
@@ -1367,7 +1363,7 @@ function showErr(id,msg){const el=document.getElementById(id);el.classList.remov
 function hideErr(id){document.getElementById(id).classList.add('hidden');}
 
 async function doLogin(){
-  if(!_fbReady){ showErr('loginErr','No internet connection. Please check your connection and retry.'); return; }
+  if(!_fbReady){ showErr('loginErr','Still connecting to server... Please wait a moment and try again.'); return; }
   const email=document.getElementById('loginEmail').value.trim();
   const pass=document.getElementById('loginPass').value;
   hideErr('loginErr');
@@ -1484,44 +1480,28 @@ async function doGoogle(){
 // ============================================================
 //  AUTH STATE LISTENER
 // ============================================================
-// ── AUTH STATE GATE ──────────────────────────────────────────────────────
 let _authReady = false;
 let _pendingUser = undefined;
 
-async function _handleAuthUser(user){
-  if(user){
-    currentUser=user;
-    const sp=document.getElementById('splash'); if(sp) sp.style.display='none';
-    document.getElementById('authWrap').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
-    await loadAppData();
-  } else {
-    currentUser=null;
-    const sp=document.getElementById('splash'); if(sp) sp.style.display='none';
-    document.getElementById('app').classList.add('hidden');
-    document.getElementById('authWrap').classList.remove('hidden');
-  }
-}
-// onAuthStateChanged is registered inside initFirebase().then() above
-// This runs after Firebase is confirmed ready
-
 async function _handleAuthUser(user) {
+  // Cancel splash fallback timer if it's pending
+  if (window._splashFallback) { clearTimeout(window._splashFallback); window._splashFallback = null; }
+  const sp = document.getElementById('splash');
+  if (sp) sp.style.display = 'none';
   if (user) {
     currentUser = user;
     document.getElementById('authWrap').classList.add('hidden');
     document.getElementById('app').classList.remove('hidden');
-    document.getElementById('splash').style.display = 'none';
     await loadAppData();
   } else {
     currentUser = null;
     document.getElementById('app').classList.add('hidden');
-    document.getElementById('splash').style.display = 'none';
     document.getElementById('authWrap').classList.remove('hidden');
   }
 }
 
 async function loadAppData(){
-  // ── Try loading cached data from IndexedDB first (instant UI) ──
+  // -- Try loading cached data from IndexedDB first (instant UI) --
   const cachedProds = await loadFromIDB('products');
   if(cachedProds && cachedProds.length > 0){
     allProducts = cachedProds;
@@ -1532,7 +1512,7 @@ async function loadAppData(){
   const cachedWL = await loadFromIDB('wl_'+(currentUser?.uid||''));
   if(cachedWL) { wishlist = cachedWL; renderWishlist(); }
 
-  // Profile — if user doc doesn't exist yet (e.g. Google sign-in), create it
+  // Profile -- if user doc doesn't exist yet (e.g. Google sign-in), create it
   const snap=await db.ref('users/'+currentUser.uid).get();
   let udata=snap.val();
   if(!udata){
@@ -1577,7 +1557,7 @@ async function loadAppData(){
   const setSnap=await db.ref('appSettings').get();
   appSettings=setSnap.val()||{upiId:'princeenterprise@upi'};
 
-  // Products — always load defaults if Firebase empty, then save them
+  // Products -- always load defaults if Firebase empty, then save them
   const pSnap=await db.ref('products').get();
   if(pSnap.val() && Object.keys(pSnap.val()).length > 0){
     allProducts=Object.entries(pSnap.val()).map(([id,p])=>({id,...p}));
@@ -1595,7 +1575,7 @@ async function loadAppData(){
   const wSnap=await db.ref('wishlists/'+currentUser.uid).get();
   wishlist=wSnap.val()?Object.values(wSnap.val()):[];
 
-  // Orders — get snapshot first (reliable), then set realtime listener
+  // Orders -- get snapshot first (reliable), then set realtime listener
   try{
     const oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
     orderHistory=oSnap.val()?Object.entries(oSnap.val()).map(([id,o])=>({id,...o})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)):[];
@@ -1638,7 +1618,7 @@ const categories=[
 ];
 
 
-// ── DEFAULT PRODUCTS (fallback when Firebase is empty) ──────────
+// -- DEFAULT PRODUCTS (fallback when Firebase is empty) ----------
 function defaultProducts(){
   return [
     {id:'p1',name:'Prince 9W LED Bulb Warm White',category:'Bulbs',price:79,originalPrice:149,discount:47,rating:4.5,reviews:128,image:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',stock:50,isNew:true,isBestSeller:true,description:'Energy efficient 9W LED bulb. 270° beam. 25,000 hrs life.',wattage:'9W',voltage:'220V',color:'Warm White 3000K',warranty:'2 Years'},
@@ -1717,7 +1697,7 @@ function renderAllProducts(filtered=null){
         allProducts=cached;
         el.innerHTML=allProducts.map(p=>pcCard(p,'')).join('');
       } else {
-        el.innerHTML='<div class="page-empty" style="grid-column:1/-1"><i class="fas fa-lightbulb" style="font-size:48px;opacity:.2;display:block;margin-bottom:12px"></i><h3>Loading Products…</h3><p style="font-size:12.5px">Check your internet connection</p></div>';
+        el.innerHTML='<div class="page-empty" style="grid-column:1/-1"><i class="fas fa-lightbulb" style="font-size:48px;opacity:.2;display:block;margin-bottom:12px"></i><h3>Loading Products...</h3><p style="font-size:12.5px">Check your internet connection</p></div>';
       }
     });
     return;
@@ -1873,7 +1853,7 @@ function addToCart(pid){
   const ex=cart.find(c=>c.id===pid);
   if(ex){ex.qty=(ex.qty||1)+qty;}
   else cart.push({...p,qty});
-  saveCart();renderAll();showToast(`${p.name.slice(0,25)}… added to cart`);
+  saveCart();renderAll();showToast(`${p.name.slice(0,25)}... added to cart`);
 }
 function removeCart(pid){
   cart=cart.filter(c=>c.id!==pid);
@@ -1919,7 +1899,7 @@ function renderCart(){
       <div class="ci-del" onclick="removeCart('${c.id}')"><i class="fas fa-trash"></i></div>
     </div>
   `).join('')+`
-    <div class="cart-coup"><input id="couponIn" placeholder="Enter coupon code…"><button onclick="applyCoupon()">Apply</button></div>
+    <div class="cart-coup"><input id="couponIn" placeholder="Enter coupon code..."><button onclick="applyCoupon()">Apply</button></div>
     <div class="cart-sum">
       <div class="csum-row"><span>Price (${cart.length} items)</span><span>₹${cart.reduce((s,c)=>s+c.originalPrice*(c.qty||1),0)}</span></div>
       <div class="csum-row"><span>Discount</span><span style="color:var(--g)">−₹${disc}</span></div>
@@ -1988,7 +1968,7 @@ function switchPay(tab){
   document.getElementById('pt-cod').classList.toggle('on',tab==='cod');
 }
 
-// ── Address picker at checkout ────────────────────────────────────
+// -- Address picker at checkout ------------------------------------
 function openCheckoutAddrPicker(){
   const el = document.createElement('div');
   el.id = 'checkoutAddrPick';
@@ -2007,7 +1987,7 @@ function openCheckoutAddrPicker(){
     + '<div style="padding:12px 16px;border-bottom:1px solid var(--d);position:sticky;top:0;background:var(--c)">'
     + '<div style="width:36px;height:4px;background:var(--b);border-radius:2px;margin:0 auto 12px"></div>'
     + '<div style="display:flex;align-items:center;justify-content:space-between"><h3 style="font-family:Exo 2,sans-serif;font-size:16px;font-weight:800">Choose Address</h3>'
-    + '<button onclick="this.closest('[id=checkoutAddrPick]').remove();openAddAddress()" style="font-size:12px;color:var(--p);font-weight:700;background:var(--pl);border:none;border-radius:6px;padding:6px 11px;cursor:pointer">+ Add New</button></div>'
+    + '<button onclick="document.getElementById(&quot;checkoutAddrPick&quot;).remove();openAddAddress()" style="font-size:12px;color:var(--p);font-weight:700;background:var(--pl);border:none;border-radius:6px;padding:6px 11px;cursor:pointer">+ Add New</button></div>'
     + '</div>'
     + '<div style="padding:12px 14px">' + addrHtml + '</div></div>';
   document.body.appendChild(el);
@@ -2177,7 +2157,7 @@ function showOrderTrack(ordId){
         <div class="tstep ${s.done?'done':i===curIdx+1?'cur':''}">
           <div class="tstep-dot"><i class="fas fa-check"></i></div>
           <div class="tstep-t">${s.status}</div>
-          <div class="tstep-d">${s.done&&s.time?new Date(s.time).toLocaleString('en-IN'):(i===curIdx+1?'In progress…':'Pending')}</div>
+          <div class="tstep-d">${s.done&&s.time?new Date(s.time).toLocaleString('en-IN'):(i===curIdx+1?'In progress...':'Pending')}</div>
         </div>
       `).join('')}
     </div>
@@ -2531,7 +2511,7 @@ function renderAddrList(){
   el.innerHTML=userAddresses.map(a=>`
     <div class="addr-item ${a.id===selectedAddrId?'selected':''}" onclick="selectAddr('${a.id}')">
       <div class="addr-type">${a.type==='Home'?'🏠':a.type==='Work'?'🏢':'📍'} ${a.type}${a.isDefault?' · Default':''}</div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:2px">${a.name||'—'} ${a.phone?'· '+a.phone:''}</div>
+      <div style="font-size:13px;font-weight:700;margin-bottom:2px">${a.name||'--'} ${a.phone?'· '+a.phone:''}</div>
       <div class="addr-text">${[a.line1,a.line2,a.city,a.state,a.pin].filter(Boolean).join(', ')}</div>
       <div style="display:flex;gap:8px;margin-top:8px">
         ${!a.isDefault?`<span onclick="event.stopPropagation();setDefaultAddr('${a.id}')" style="font-size:11px;color:var(--p);font-weight:700;cursor:pointer">Set Default</span>`:''}
@@ -2601,7 +2581,7 @@ function openInvoice(ordId){
   const o=orderHistory.find(x=>x.id===ordId||x.orderId===ordId);
   if(!o){showToast('Order not found');return;}
   const addr=userAddresses.find(a=>a.id===selectedAddrId)||userAddresses[0];
-  const addrStr=addr?[addr.line1,addr.line2,addr.city,addr.state,addr.pin].filter(Boolean).join(', '):'—';
+  const addrStr=addr?[addr.line1,addr.line2,addr.city,addr.state,addr.pin].filter(Boolean).join(', '):'--';
   const subtotal=(o.items||[]).reduce((s,i)=>s+i.price*(i.qty||1),0);
   const disc=0; const gst=Math.round(subtotal*0.05);
   const total=o.total||subtotal;
@@ -2662,7 +2642,7 @@ function downloadInvoice(){
     <style>body{margin:0;font-family:'Nunito',sans-serif}${document.querySelector('style').textContent}</style>
     </head><body>${printContent.outerHTML}<script>window.print();window.close();<\/script></body></html>`);
   win.document.close();
-  showToast('Opening print dialog…');
+  showToast('Opening print dialog...');
 }
 
 // ============================================================
@@ -2797,7 +2777,7 @@ function openLiveChat(){
         <div style="font-size:10px;color:var(--m);text-align:center">You can also reach us on <strong>WhatsApp</strong> for faster response</div>
       </div>
       <div style="padding:10px 12px;border-top:1px solid var(--d);display:flex;gap:8px">
-        <input id="chatInput" placeholder="Type your message…" style="flex:1;padding:10px 13px;border:1.5px solid var(--b);border-radius:20px;font-size:13px;background:var(--c);color:var(--t);outline:none">
+        <input id="chatInput" placeholder="Type your message..." style="flex:1;padding:10px 13px;border:1.5px solid var(--b);border-radius:20px;font-size:13px;background:var(--c);color:var(--t);outline:none">
         <button onclick="sendChatMsg()" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7b1fa2,#4a148c);color:#fff;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center"><i class="fas fa-paper-plane"></i></button>
       </div>
       <div style="display:flex;gap:7px;padding:0 12px 12px;overflow-x:auto;scrollbar-width:none">
@@ -2854,7 +2834,7 @@ function runCompare(){
   if(compareList.length < 2){ showToast('Select 2 products to compare'); return; }
   const [a,b] = compareList.map(id=>allProducts.find(p=>p.id===id));
   if(!a||!b) return;
-  const rows = [['Price','₹'+a.price,'₹'+b.price],['Rating',(a.rating||0)+'⭐',(b.rating||0)+'⭐'],['Category',a.category,b.category],['Wattage',a.wattage||'—',b.wattage||'—'],['Voltage',a.voltage||'—',b.voltage||'—'],['Warranty',a.warranty||'—',b.warranty||'—'],['Stock',(a.stock||0)+' units',(b.stock||0)+' units'],['Discount',(a.discount||0)+'%',(b.discount||0)+'%']];
+  const rows = [['Price','₹'+a.price,'₹'+b.price],['Rating',(a.rating||0)+'⭐',(b.rating||0)+'⭐'],['Category',a.category,b.category],['Wattage',a.wattage||'--',b.wattage||'--'],['Voltage',a.voltage||'--',b.voltage||'--'],['Warranty',a.warranty||'--',b.warranty||'--'],['Stock',(a.stock||0)+' units',(b.stock||0)+' units'],['Discount',(a.discount||0)+'%',(b.discount||0)+'%']];
   const sheet = document.createElement('div');
   sheet.style.cssText = 'position:fixed;inset:0;z-index:950;display:flex;flex-direction:column;justify-content:flex-end';
   sheet.innerHTML = `
@@ -3006,13 +2986,13 @@ function openBulkOrder(){
         <p style="font-size:12px;color:var(--m);margin-top:2px">Get special pricing for orders above 10 units</p>
       </div>
       <div style="padding:14px 16px">
-        <div style="margin-bottom:11px"><label style="display:block;font-size:10.5px;font-weight:800;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Product / Description</label><input id="bulk-prod" placeholder="e.g. 9W LED Bulbs, Panel Lights…" style="width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit;box-sizing:border-box"></div>
+        <div style="margin-bottom:11px"><label style="display:block;font-size:10.5px;font-weight:800;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Product / Description</label><input id="bulk-prod" placeholder="e.g. 9W LED Bulbs, Panel Lights..." style="width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit;box-sizing:border-box"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px">
           <div><label style="display:block;font-size:10.5px;font-weight:800;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Quantity</label><input id="bulk-qty" type="number" placeholder="50" style="width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit;box-sizing:border-box"></div>
           <div><label style="display:block;font-size:10.5px;font-weight:800;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Budget (₹)</label><input id="bulk-budget" type="number" placeholder="10000" style="width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit;box-sizing:border-box"></div>
         </div>
         <div style="margin-bottom:11px"><label style="display:block;font-size:10.5px;font-weight:800;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Contact Phone</label><input id="bulk-phone" type="tel" placeholder="+91 98765 43210" style="width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit;box-sizing:border-box"></div>
-        <div style="margin-bottom:16px"><label style="display:block;font-size:10.5px;font-weight:800;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Additional Notes</label><textarea id="bulk-notes" rows="3" placeholder="Delivery location, timeline, specifications…" style="width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit;resize:none;box-sizing:border-box"></textarea></div>
+        <div style="margin-bottom:16px"><label style="display:block;font-size:10.5px;font-weight:800;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px">Additional Notes</label><textarea id="bulk-notes" rows="3" placeholder="Delivery location, timeline, specifications..." style="width:100%;padding:11px 13px;border:1.5px solid var(--b);border-radius:8px;font-size:13px;background:var(--c);color:var(--t);font-family:inherit;resize:none;box-sizing:border-box"></textarea></div>
         <button onclick="submitBulkOrder()" style="width:100%;padding:13px;background:linear-gradient(135deg,#2874f0,#1565c0);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px"><i class="fas fa-paper-plane"></i> Send Bulk Enquiry</button>
       </div>
     </div>`;
@@ -3024,21 +3004,21 @@ async function submitBulkOrder(){
   const qty = document.getElementById('bulk-qty')?.value;
   const phone = document.getElementById('bulk-phone')?.value.trim();
   if(!prod||!qty||!phone){ showToast('Please fill required fields'); return; }
-  const msg = `Bulk Order Enquiry from Prince Enterprise App:\nProduct: ${prod}\nQuantity: ${qty}\nBudget: ₹${document.getElementById('bulk-budget')?.value||'—'}\nPhone: ${phone}\nNotes: ${document.getElementById('bulk-notes')?.value||'—'}`;
+  const msg = `Bulk Order Enquiry from Prince Enterprise App:\nProduct: ${prod}\nQuantity: ${qty}\nBudget: ₹${document.getElementById('bulk-budget')?.value||'--'}\nPhone: ${phone}\nNotes: ${document.getElementById('bulk-notes')?.value||'--'}`;
   if(currentUser) await db.ref('bulkOrders/'+Date.now()).set({prod,qty,phone,userId:currentUser.uid,time:Date.now()});
   window.open('https://wa.me/919876543210?text='+encodeURIComponent(msg),'_blank');
   document.querySelector('[id$="bulk-prod"]')?.closest('div[style*=fixed]')?.remove();
   showToast('Bulk enquiry sent!');
 }
 
-// ─── 9. PRODUCT IMAGE ZOOM ───────────────────────────────────────
+// --- 9. PRODUCT IMAGE ZOOM ---------------------------------------
 function openZoom(src){
   document.getElementById('zoomImg').src = src;
   document.getElementById('zoomModal').classList.remove('hidden');
 }
 function closeZoom(){ document.getElementById('zoomModal').classList.add('hidden'); }
 
-// ─── 10. REFERRAL SYSTEM ─────────────────────────────────────────
+// --- 10. REFERRAL SYSTEM -----------------------------------------
 function openReferral(){
   if(!currentUser){ showToast('Please login first'); return; }
   const code = 'PE'+currentUser.uid.substring(0,6).toUpperCase();
@@ -3062,11 +3042,11 @@ function shareRefCode(){
   window.open('https://wa.me/?text='+encodeURIComponent('Use my Prince Enterprise referral code '+c+' and get ₹50 off your first order! Shop premium LED lights at the best prices.'),'_blank');
 }
 
-// ── Add new items to Profile menu ────────────────────────────────
+// -- Add new items to Profile menu --------------------------------
 // Hook into existing profile render by adding rows dynamically after load
 // addProfileExtras removed - profile rebuilt with acct-* classes
 
-// ── Patch openPD to track recently viewed + add zoom + compare + share ─────
+// -- Patch openPD to track recently viewed + add zoom + compare + share -----
 const _origOpenPD = openPD;
 openPD = function(pid){
   _origOpenPD(pid);
@@ -3099,14 +3079,14 @@ openPD = function(pid){
   }, 100);
 };
 
-// ── Patch navTo to add profile extras ────────────────────────────
+// -- Patch navTo to add profile extras ----------------------------
 const _origNavTo = navTo;
 navTo = function(pg){
   _origNavTo(pg);
   if(pg==='profile') setTimeout(addProfileExtras, 50);
 };
 
-// ── Add Recently Viewed section to home ──────────────────────────
+// -- Add Recently Viewed section to home --------------------------
 const _origRenderAll = renderAll;
 renderAll = function(){
   _origRenderAll();
@@ -3114,23 +3094,21 @@ renderAll = function(){
 };
 
 
-// ── Network Status Monitor ────────────────────────────────────────
+// -- Network Status Monitor ----------------------------------------
 window.addEventListener('online', () => {
   document.getElementById('offlineBanner').style.display = 'none';
   if (!_fbReady) {
-    showToast('Back online! Reconnecting…');
+    showToast('Back online! Reconnecting...');
     initFirebase().then(ok => {
       if (ok) {
         showToast('Connected! ✓');
         // Re-register auth listener
+        // Single listener -- handles both pending and ready states
         auth.onAuthStateChanged(async user => {
           if (window._signingUp) return;
           _pendingUser = user;
           if (_authReady) await _handleAuthUser(user);
         });
-        if (_authReady) {
-          auth.onAuthStateChanged(async user => { await _handleAuthUser(user); });
-        }
       }
     });
   }
