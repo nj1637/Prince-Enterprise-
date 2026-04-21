@@ -1668,18 +1668,38 @@ async function loadAppData(){
     if(cachedOrders && cachedOrders.length>0){ orderHistory=cachedOrders; renderOrders(); }
     // Then fetch fresh from Firebase
     try{
-      const oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
-      if(oSnap.val()){
+      // Try indexed query first, fallback to full scan
+      let oSnap;
+      try{
+        oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
+      }catch(idxErr){
+        console.warn('Index missing, falling back to full scan');
+        const allSnap=await db.ref('orders').get();
+        // Client-side filter
+        if(allSnap.val()){
+          const filtered={};
+          Object.entries(allSnap.val()).forEach(([id,o])=>{
+            if(o.userId===currentUser.uid||o.userEmail===currentUser.email) filtered[id]=o;
+          });
+          oSnap={val:()=>Object.keys(filtered).length?filtered:null};
+        } else { oSnap={val:()=>null}; }
+      }
+      if(oSnap && oSnap.val()){
         orderHistory=Object.entries(oSnap.val()).map(([id,o])=>({id,...o})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
         saveToIDB('orders_'+currentUser.uid, orderHistory);
         renderOrders();
       }
     }catch(e){ console.warn('Orders fetch error',e); }
     // Live updates after initial load
-    db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).on('value', snap=>{
+    // Realtime listener — watches ALL orders, filters client-side (avoids index requirement)
+    db.ref('orders').on('value', snap=>{
       if(!snap.val()) return;
-      orderHistory=Object.entries(snap.val()).map(([id,o])=>({id,...o})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-      saveToIDB('orders_'+currentUser.uid, orderHistory);
+      const uid=currentUser?.uid; const em=currentUser?.email;
+      orderHistory=Object.entries(snap.val())
+        .map(([id,o])=>({id,...o}))
+        .filter(o=>o.userId===uid||o.userEmail===em)
+        .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      saveToIDB('orders_'+(uid||''), orderHistory);
       renderOrders();
       const so=document.getElementById('statOrders'); if(so) so.textContent=orderHistory.length;
       const ob=document.getElementById('ordCountBadge');
