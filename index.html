@@ -524,6 +524,63 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
 .tog2.on{background:var(--p)}
 .tog2.on::after{transform:translateX(20px)}
 
+
+/* === ORDERS PAGE === */
+.orders-page{padding:12px 10px 100px}
+.orders-page h2{font-family:'Exo 2',sans-serif;font-size:18px;font-weight:900;margin-bottom:14px;color:var(--t)}
+
+.ord-card{background:var(--c);border-radius:14px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden;border:1px solid var(--d);transition:var(--tr)}
+.ord-card:active{transform:scale(.99)}
+
+.ord-head{padding:12px 14px 10px;border-bottom:1px solid var(--d);display:flex;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(135deg,rgba(40,116,240,.04),rgba(40,116,240,.01))}
+.ord-num{font-family:'Exo 2',sans-serif;font-size:12px;font-weight:800;color:var(--t);letter-spacing:.3px}
+.ord-date{font-size:10.5px;color:var(--m);margin-top:1px}
+
+.ord-badge{padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;white-space:nowrap}
+.ob-confirmed{background:#e3f2fd;color:#1565c0}
+.ob-processing{background:#fff8e1;color:#e65100}
+.ob-shipped{background:#f3e5f5;color:#7b1fa2}
+.ob-out-for-delivery{background:#fff3e0;color:#e65100}
+.ob-delivered{background:#e8f5e9;color:#2e7d32}
+.ob-cancelled{background:#ffebee;color:#c62828}
+
+.ord-items{padding:10px 14px}
+.ord-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--d)}
+.ord-row:last-child{border-bottom:none}
+.ord-thumb{width:54px;height:54px;border-radius:8px;object-fit:cover;background:var(--c2);flex-shrink:0}
+.ord-detail{}
+.ord-pname{font-size:12.5px;font-weight:700;line-height:1.3;margin-bottom:3px;color:var(--t)}
+.ord-pmeta{font-size:11.5px;color:var(--m)}
+.ord-pmeta strong{color:var(--t);font-weight:800}
+
+.ord-foot{padding:10px 14px;background:var(--c2);display:flex;align-items:center;justify-content:space-between}
+.ord-total{font-size:14px;font-weight:900;font-family:'Exo 2',sans-serif;color:var(--t)}
+.ord-pay-badge{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:10px;background:var(--pl);color:var(--p)}
+
+.ord-btns{display:flex;gap:7px;padding:10px 14px;border-top:1px solid var(--d);flex-wrap:wrap}
+.ord-btn{flex:1;min-width:0;padding:8px 6px;border-radius:9px;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:var(--tr);white-space:nowrap}
+.ob-track{background:#e3f2fd;color:#1565c0}
+.ob-track:active{background:#1565c0;color:#fff}
+.ob-invoice{background:#e8f5e9;color:#2e7d32}
+.ob-invoice:active{background:#2e7d32;color:#fff}
+.ob-wa{background:#e8f8f0;color:#128c7e}
+.ob-wa:active{background:#128c7e;color:#fff}
+.ob-cancel{background:#ffebee;color:#c62828}
+.ob-cancel:active{background:#c62828;color:#fff}
+
+.ord-more{font-size:11px;color:var(--m);padding:4px 0;font-style:italic}
+
+/* Progress bar inside order */
+.ord-progress{padding:8px 14px;display:flex;align-items:center;gap:4px}
+.op-step{flex:1;height:4px;border-radius:2px;background:var(--d);transition:background .3s}
+.op-step.done{background:var(--p)}
+.op-step.current{background:linear-gradient(90deg,var(--p),var(--pl))}
+
+.orders-empty{padding:70px 20px;text-align:center;color:var(--m)}
+.orders-empty i{font-size:60px;opacity:.18;display:block;margin-bottom:16px}
+.orders-empty h3{font-size:16px;font-weight:800;color:var(--t);margin-bottom:6px}
+.orders-empty p{font-size:12.5px;line-height:1.5}
+.orders-empty .shop-btn{display:inline-flex;align-items:center;gap:7px;margin-top:18px;padding:12px 24px;background:var(--p);color:#fff;border-radius:25px;font-size:13px;font-weight:800;cursor:pointer}
 </style>
 </head>
 <body>
@@ -711,7 +768,7 @@ input,select,textarea{font-family:inherit;outline:none}ul{list-style:none}
     <!-- ORDERS PAGE -->
     <div id="pgOrders" class="pview">
       <div class="sechdr"><h2>My Orders</h2></div>
-      <div id="ordersListWrap"><div class="page-empty"><i class="fas fa-box-open"></i><h3>No Orders Yet</h3><p>Your orders will appear here</p></div></div>
+      <div id="ordersListWrap" class="orders-page"><div class="page-empty"><i class="fas fa-box-open"></i><h3>No Orders Yet</h3><p>Your orders will appear here</p></div></div>
     </div>
 
     <!-- WISHLIST PAGE -->
@@ -1577,12 +1634,23 @@ async function loadAppData(){
 
   // Orders -- get snapshot first (reliable), then set realtime listener
   try{
-    const oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
-    orderHistory=oSnap.val()?Object.entries(oSnap.val()).map(([id,o])=>({id,...o})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)):[];
-    renderOrders();
+    // Load from IDB cache first (instant display even offline/after reopen)
+    const cachedOrders = await loadFromIDB('orders_'+(currentUser?.uid||''));
+    if(cachedOrders && cachedOrders.length>0){ orderHistory=cachedOrders; renderOrders(); }
+    // Then fetch fresh from Firebase
+    try{
+      const oSnap=await db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).get();
+      if(oSnap.val()){
+        orderHistory=Object.entries(oSnap.val()).map(([id,o])=>({id,...o})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+        saveToIDB('orders_'+currentUser.uid, orderHistory);
+        renderOrders();
+      }
+    }catch(e){ console.warn('Orders fetch error',e); }
     // Live updates after initial load
     db.ref('orders').orderByChild('userId').equalTo(currentUser.uid).on('value', snap=>{
-      orderHistory=snap.val()?Object.entries(snap.val()).map(([id,o])=>({id,...o})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)):[];
+      if(!snap.val()) return;
+      orderHistory=Object.entries(snap.val()).map(([id,o])=>({id,...o})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      saveToIDB('orders_'+currentUser.uid, orderHistory);
       renderOrders();
       const so=document.getElementById('statOrders'); if(so) so.textContent=orderHistory.length;
       const ob=document.getElementById('ordCountBadge');
@@ -2063,6 +2131,7 @@ async function placeOrder(method){
   };
   try{
     await db.ref('orders/'+ordId).set(order);
+    orderHistory.unshift(order); saveToIDB('orders_'+currentUser.uid, orderHistory);
     await db.ref('carts/'+currentUser.uid).remove();
     db.ref('adminNotifications/'+ordId).set({type:'new_order',orderId,total:checkoutTotal,method,time:Date.now(),userEmail:currentUser.email});
   }catch(err){ console.error('Order save error:',err); }
@@ -2115,34 +2184,52 @@ function renderOrders(){
   const el=document.getElementById('ordersListWrap');
   if(!el) return;
   if(!orderHistory || !orderHistory.length){
-    el.innerHTML='<div class="page-empty" style="padding:60px 20px;text-align:center;color:var(--m)"><i class="fas fa-box-open" style="font-size:56px;opacity:.25;display:block;margin-bottom:14px"></i><h3 style="font-size:15px;font-weight:700;margin-bottom:5px">No Orders Yet</h3><p style="font-size:12.5px">Your orders will appear here after you place one</p></div>';
+    el.innerHTML=`<div class="orders-empty">
+      <i class="fas fa-box-open"></i>
+      <h3>No Orders Yet</h3>
+      <p>Your orders will appear here<br>after you place one</p>
+      <div class="shop-btn" onclick="navTo('home')"><i class="fas fa-shopping-bag"></i> Shop Now</div>
+    </div>`;
     return;
   }
-  el.innerHTML=orderHistory.map(o=>`
-    <div class="ord-card">
-      <div class="ord-top">
-        <div class="ord-id">Order #${o.orderId} · ${new Date(o.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
-        <span class="ord-st st-${(o.status||'processing').toLowerCase().replace(' ','-')}">${o.status||'Processing'}</span>
-      </div>
-      ${(o.items||[]).slice(0,2).map(i=>`
-        <div class="ord-item">
-          <img class="ord-img" src="${i.image}" onerror="this.src='https://via.placeholder.com/60x60/f0f0f0/888?text=P'">
-          <div class="ord-info"><div class="ord-name">${i.name}</div><div class="ord-meta">Qty: ${i.qty||1} · ₹${i.price}</div></div>
+  const statusSteps=['Order Placed','Processing','Shipped','Out for Delivery','Delivered'];
+  const badgeClass=s=>({Confirmed:'ob-confirmed',Processing:'ob-processing',Shipped:'ob-shipped','Out for Delivery':'ob-out-for-delivery',Delivered:'ob-delivered',Cancelled:'ob-cancelled'}[s]||'ob-processing');
+  el.innerHTML=orderHistory.map(o=>{
+    const st=o.status||'Processing';
+    const stepIdx=statusSteps.indexOf(st==='Confirmed'?'Order Placed':st);
+    const progressHTML=st==='Cancelled'?'':`<div class="ord-progress">${statusSteps.map((_,i)=>`<div class="op-step ${i<stepIdx?'done':i===stepIdx?'current':''}"></div>`).join('')}</div>`;
+    const itemsHTML=(o.items||[]).slice(0,2).map(i=>`
+      <div class="ord-row">
+        <img class="ord-thumb" src="${i.image}" onerror="this.src='https://via.placeholder.com/60x60/e3f2fd/1565c0?text=LED'">
+        <div class="ord-detail">
+          <div class="ord-pname">${i.name}</div>
+          <div class="ord-pmeta">Qty: ${i.qty||1} &nbsp;·&nbsp; <strong>₹${i.price}</strong></div>
         </div>
-      `).join('')}
-      ${(o.items||[]).length>2?`<p style="font-size:11px;color:var(--m);padding:4px 0">+${o.items.length-2} more item(s)</p>`:''}
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0 0;font-size:13px;font-weight:800">
-        <span style="color:var(--m)">Total: <span style="color:var(--t)">₹${o.total}</span></span>
-        <span style="font-size:11px;color:var(--m)">${o.paymentMethod||'COD'}</span>
+      </div>`).join('');
+    const moreHTML=(o.items||[]).length>2?`<p class="ord-more">+${o.items.length-2} more item(s)</p>`:'';
+    return `<div class="ord-card">
+      <div class="ord-head">
+        <div>
+          <div class="ord-num">#${o.orderId}</div>
+          <div class="ord-date">${new Date(o.createdAt||Date.now()).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>
+        </div>
+        <span class="ord-badge ${badgeClass(st)}">${st}</span>
       </div>
-      <div class="ord-actions">
-        <div class="oa-btn oa-p" onclick="showOrderTrack('${o.orderId}')"><i class="fas fa-map-marker-alt"></i> Track</div>
-        <div class="oa-btn oa-p" onclick="openInvoice('${o.orderId||o.id}')"><i class="fas fa-file-invoice"></i> Invoice</div>
-        <div class="oa-btn oa-p" onclick="contactWA('Order ${o.orderId}')"><i class="fab fa-whatsapp"></i> Support</div>
-        ${o.status==='Delivered'?`<div class="oa-btn oa-r" onclick="openCancelOrder('${o.orderId}')"><i class="fas fa-undo"></i> Return</div>`:''}
+      ${progressHTML}
+      <div class="ord-items">${itemsHTML}${moreHTML}</div>
+      <div class="ord-foot">
+        <div class="ord-total">₹${o.total||0}</div>
+        <span class="ord-pay-badge">${o.paymentMethod||'COD'}</span>
       </div>
-    </div>
-  `).join('');
+      <div class="ord-btns">
+        <div class="ord-btn ob-track" onclick="showOrderTrack('${o.orderId}')"><i class="fas fa-location-dot"></i> Track</div>
+        <div class="ord-btn ob-invoice" onclick="openInvoice('${o.orderId||o.id}')"><i class="fas fa-receipt"></i> Invoice</div>
+        <div class="ord-btn ob-wa" onclick="contactWA('Order ${o.orderId}')"><i class="fab fa-whatsapp"></i> Support</div>
+        ${st==='Delivered'?`<div class="ord-btn ob-cancel" onclick="openCancelOrder('${o.orderId}')"><i class="fas fa-rotate-left"></i> Return</div>`:''}
+        ${st!=='Delivered'&&st!=='Cancelled'?`<div class="ord-btn ob-cancel" onclick="openCancelOrder('${o.orderId}')"><i class="fas fa-xmark"></i> Cancel</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function showOrderTrack(ordId){
